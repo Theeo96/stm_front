@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강한 매니저 - 교육 관리 대시보드</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <img src="https://www.genspark.ai/api/files/s/1lqMcLhw" alt="강한 매니저 로고" class="header-logo">
+                <div class="header-title">
+                    <h1>강한 매니저</h1>
+                    <span class="subtitle">AI 기반 교육 관리 시스템</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="themeToggle" class="theme-toggle-btn" title="테마 전환">
+                    <i class="fas fa-adjust"></i>
+                    <span id="themeLabel">라이트 모드</span>
+                </button>
+                <div class="status-badge" id="systemStatus">
+                    <i class="fas fa-circle"></i> 시스템 대기중
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Control Panel -->
+            <section class="control-panel">
+                <h2><i class="fas fa-sliders-h"></i> 제어 패널</h2>
+                <div class="control-buttons">
+                    <button id="startMonitoring" class="control-btn start-btn">
+                        <i class="fas fa-play"></i>
+                        <span>감독 시작</span>
+                    </button>
+                    <button id="stopMonitoring" class="control-btn stop-btn" disabled>
+                        <i class="fas fa-stop"></i>
+                        <span>감독 종료</span>
+                    </button>
+                    <button id="pauseMonitoring" class="control-btn pause-btn" disabled>
+                        <i class="fas fa-pause"></i>
+                        <span>일시 정지</span>
+                    </button>
+                    <button id="emergencyAlert" class="control-btn alert-btn">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>긴급 공지</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Statistics Cards -->
+            <section class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>총 수강생</h3>
+                        <p class="stat-value" id="totalStudents">8</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon present">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>출석</h3>
+                        <p class="stat-value" id="presentStudents">7</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon absent">
+                        <i class="fas fa-user-times"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>결석</h3>
+                        <p class="stat-value" id="absentStudents">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon warning">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>경고</h3>
+                        <p class="stat-value" id="warningStudents">1</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agent Status -->
+            <section class="agent-status-section">
+                <h2><i class="fas fa-robot"></i> AI 에이전트 상태</h2>
+                <div class="agent-grid">
+                    <div class="agent-card" data-agent="admin">
+                        <div class="agent-header">
+                            <i class="fas fa-user-cog"></i>
+                            <h3>운영 Agent</h3>
+                            <button class="agent-settings-btn" onclick="openAgentSettings('admin')" title="설정">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                        <div class="agent-status active">
+                            <i class="fas fa-circle"></i> 활성
+                        </div>
+                        <p class="agent-description">교육 Q&A, 공지사항, 일정 관리</p>
+                    </div>
+                    <div class="agent-card" data-agent="tutor">
+                        <div class="agent-header">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h3>학습 Agent</h3>
+                            <button class="agent-settings-btn" onclick="openAgentSettings('tutor')" title="설정">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                        <div class="agent-status active">
+                            <i class="fas fa-circle"></i> 활성
+                        </div>
+                        <p class="agent-description">수업 질의응답, 내용 요약</p>
+                    </div>
+                    <div class="agent-card" data-agent="monitor">
+                        <div class="agent-header">
+                            <i class="fas fa-video"></i>
+                            <h3>감시 Agent</h3>
+                            <button class="agent-settings-btn" onclick="openAgentSettings('monitor')" title="설정">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                        <div class="agent-status standby">
+                            <i class="fas fa-circle"></i> 대기중
+                        </div>
+                        <p class="agent-description">카메라 화면 감시, 경고 발송</p>
+                    </div>
+                    <div class="agent-card" data-agent="attendance">
+                        <div class="agent-header">
+                            <i class="fas fa-clipboard-check"></i>
+                            <h3>출결 Agent</h3>
+                            <button class="agent-settings-btn" onclick="openAgentSettings('attendance')" title="설정">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                        <div class="agent-status active">
+                            <i class="fas fa-circle"></i> 활성
+                        </div>
+                        <p class="agent-description">출결 체크 및 정정 요청 관리</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agent Settings Modal -->
+            <div id="agentSettingsModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-cog"></i> <span id="modalAgentName"></span> 설정</h2>
+                        <button class="modal-close" onclick="closeAgentSettings()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modalBody">
+                        <!-- JavaScript로 동적 생성 -->
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn cancel-btn" onclick="closeAgentSettings()">
+                            <i class="fas fa-times"></i> 취소
+                        </button>
+                        <button class="modal-btn save-btn" onclick="saveAgentSettings()">
+                            <i class="fas fa-save"></i> 저장
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student List -->
+            <section class="student-list-section">
+                <div class="section-header-with-actions">
+                    <h2><i class="fas fa-list"></i> 수강생 실시간 현황</h2>
+                    <button id="exportExcel" class="export-btn">
+                        <i class="fas fa-file-excel"></i>
+                        <span>출결현황 다운로드</span>
+                    </button>
+                </div>
+                <div class="student-table-wrapper">
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th>이름</th>
+                                <th>연락처</th>
+                                <th>상태</th>
+                                <th>카메라</th>
+                                <th>마지막 확인</th>
+                                <th>경고</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <!-- JavaScript로 동적 생성 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Activity Log -->
+            <section class="activity-log-section">
+                <h2><i class="fas fa-history"></i> 활동 로그</h2>
+                <div class="log-container" id="activityLog">
+                    <div class="log-entry">
+                        <span class="log-time">14:32:15</span>
+                        <span class="log-type info">시스템</span>
+                        <span class="log-message">강한 매니저 시스템이 초기화되었습니다.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Teams Scheduled Meetings -->
+            <section class="meeting-scheduler-section">
+                <div class="section-header-with-actions">
+                    <h2><i class="fas fa-calendar-check"></i> 예약된 수업 일정</h2>
+                    <button id="refreshMeetings" class="export-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>새로고침</span>
+                    </button>
+                </div>
+                
+                <div class="meetings-info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Teams에서 Power Automate로 예약된 수업 일정이 Microsoft Teams SDK를 통해 자동으로 불러와집니다.</p>
+                </div>
+                
+                <div class="meetings-log-container" id="meetingsLogContainer">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+            </section>
+
+            <!-- Monthly Attendance -->
+            <section class="monthly-attendance-section">
+                <div class="section-header-with-actions">
+                    <h2><i class="fas fa-calendar-alt"></i> 월별 출석부</h2>
+                    <div class="attendance-controls">
+                        <select id="attendanceMonth" class="month-selector">
+                            <!-- JavaScript로 동적 생성 -->
+                        </select>
+                        <button id="exportMonthlyAttendance" class="export-btn">
+                            <i class="fas fa-file-excel"></i>
+                            <span>월별 출석부 다운로드</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="monthly-stats-grid">
+                    <div class="monthly-stat-card">
+                        <div class="stat-icon-small present">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h4>평균 출석률</h4>
+                            <p class="stat-value-small" id="avgAttendanceRate">0%</p>
+                        </div>
+                    </div>
+                    <div class="monthly-stat-card">
+                        <div class="stat-icon-small time">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <h4>평균 출석시간률</h4>
+                            <p class="stat-value-small" id="avgTimeRate">0%</p>
+                        </div>
+                    </div>
+                    <div class="monthly-stat-card">
+                        <div class="stat-icon-small total">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <h4>총 수업일수</h4>
+                            <p class="stat-value-small" id="totalClassDays">0일</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="attendance-table-wrapper">
+                    <table class="attendance-table" id="monthlyAttendanceTable">
+                        <!-- JavaScript로 동적 생성 -->
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>&copy; 2025 강한 매니저. AI 기반 교육 관리 시스템</p>
+            <p>Version 1.0.0 | <i class="fas fa-server"></i> Azure Cloud</p>
+        </footer>
+    </div>
+
+    <!-- SheetJS 라이브러리 추가 (엑셀 생성용) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

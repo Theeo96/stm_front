@@ -1,0 +1,1362 @@
+/* ============================
+   강한 매니저 - 글로벌 스타일
+   ============================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #3b82f6;
+    --secondary-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f4f6;
+    --bg-card: #ffffff;
+    --border-color: #e5e7eb;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================
+   다크 모드
+   ============================ */
+
+body.dark-mode {
+    --primary-color: #60a5fa;
+    --secondary-color: #34d399;
+    --danger-color: #f87171;
+    --warning-color: #fbbf24;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --bg-card: #1f2937;
+    --border-color: #374151;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+/* 다크 모드 헤더 스타일 */
+body.dark-mode .dashboard-header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+/* ============================
+   교관 모드 (다크 + 레드 + 화이트)
+   ============================ */
+
+body.instructor-mode {
+    --primary-color: #dc2626;
+    --secondary-color: #ef4444;
+    --danger-color: #991b1b;
+    --warning-color: #f59e0b;
+    --text-primary: #ffffff;
+    --text-secondary: #fca5a5;
+    --bg-primary: #0f0f0f;
+    --bg-secondary: #1a1a1a;
+    --bg-card: #1f1f1f;
+    --border-color: #450a0a;
+    --shadow: 0 1px 3px rgba(220, 38, 38, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(220, 38, 38, 0.4);
+}
+
+body.instructor-mode .dashboard-header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #450a0a 100%);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+body.instructor-mode .stat-card {
+    border-left: 4px solid var(--primary-color);
+}
+
+body.instructor-mode .control-btn {
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+}
+
+/* ============================
+   레이아웃
+   ============================ */
+
+.dashboard-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-left h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.status-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-badge i {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ============================
+   메인 콘텐츠
+   ============================ */
+
+.dashboard-main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+section {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+section h2 i {
+    color: var(--primary-color);
+}
+
+/* ============================
+   제어 패널
+   ============================ */
+
+.control-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.control-btn {
+    padding: 1.2rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.control-btn i {
+    font-size: 1.5rem;
+}
+
+.start-btn {
+    background: linear-gradient(135deg, var(--secondary-color), #059669);
+}
+
+.start-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(16, 185, 129, 0.4);
+}
+
+.stop-btn {
+    background: linear-gradient(135deg, var(--danger-color), #dc2626);
+}
+
+.stop-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(239, 68, 68, 0.4);
+}
+
+.pause-btn {
+    background: linear-gradient(135deg, var(--warning-color), #d97706);
+}
+
+.pause-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(245, 158, 11, 0.4);
+}
+
+.alert-btn {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.alert-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(139, 92, 246, 0.4);
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================
+   통계 카드
+   ============================ */
+
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.stat-icon.total {
+    background: linear-gradient(135deg, var(--primary-color), #2563eb);
+}
+
+.stat-icon.present {
+    background: linear-gradient(135deg, var(--secondary-color), #059669);
+}
+
+.stat-icon.absent {
+    background: linear-gradient(135deg, var(--danger-color), #dc2626);
+}
+
+.stat-icon.warning {
+    background: linear-gradient(135deg, var(--warning-color), #d97706);
+}
+
+.stat-content h3 {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ============================
+   AI 에이전트 상태
+   ============================ */
+
+.agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.agent-card {
+    background: var(--bg-secondary);
+    padding: 1.2rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.agent-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.agent-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    position: relative;
+}
+
+.agent-header > i {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+}
+
+.agent-header h3 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.agent-settings-btn {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin-left: auto;
+}
+
+.agent-settings-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: rotate(90deg);
+    border-color: var(--primary-color);
+}
+
+.agent-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+}
+
+.agent-status.active {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--secondary-color);
+}
+
+.agent-status.standby {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+}
+
+.agent-status i {
+    font-size: 0.6rem;
+    animation: pulse 2s infinite;
+}
+
+.agent-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* ============================
+   수강생 테이블
+   ============================ */
+
+.section-header-with-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header-with-actions h2 {
+    margin-bottom: 0;
+}
+
+.export-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.export-btn i {
+    font-size: 1.1rem;
+}
+
+.student-table-wrapper {
+    overflow-x: auto;
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.student-table thead {
+    background: var(--bg-secondary);
+}
+
+.student-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.student-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.student-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.student-table tbody tr:hover {
+    background: var(--bg-secondary);
+}
+
+.status-badge-table {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge-table.online {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--secondary-color);
+}
+
+.status-badge-table.offline {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--text-secondary);
+}
+
+.status-badge-table.away {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+}
+
+.camera-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.camera-status.on {
+    color: var(--secondary-color);
+}
+
+.camera-status.off {
+    color: var(--danger-color);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.action-btn {
+    color: white;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.phone-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.phone-btn:hover {
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+}
+
+.message-btn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.message-btn:hover {
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+}
+
+.alert-btn-table {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.alert-btn-table:hover {
+    box-shadow: 0 4px 8px rgba(245, 158, 11, 0.4);
+}
+
+/* ============================
+   활동 로그
+   ============================ */
+
+.log-container {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    background: var(--bg-card);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-color);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.log-time {
+    font-family: 'Courier New', monospace;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.log-type {
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.log-type.info {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+.log-type.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+}
+
+.log-type.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.log-type.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--secondary-color);
+}
+
+.log-message {
+    color: var(--text-primary);
+}
+
+/* ============================
+   모달 창
+   ============================ */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: var(--bg-card);
+    margin: auto;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: var(--shadow-lg);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-header h2 i {
+    color: var(--primary-color);
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: var(--danger-color);
+    color: white;
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.cancel-btn {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.cancel-btn:hover {
+    background: var(--bg-primary);
+    transform: translateY(-2px);
+}
+
+.save-btn {
+    background: linear-gradient(135deg, var(--primary-color), #2563eb);
+    color: white;
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* 설정 폼 스타일 */
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group label i {
+    color: var(--primary-color);
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="url"],
+.form-group textarea,
+.form-group select {
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.form-group .form-help {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.toggle-switch input[type="checkbox"] {
+    width: 50px;
+    height: 26px;
+    position: relative;
+    appearance: none;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-switch input[type="checkbox"]:checked {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.toggle-switch input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input[type="checkbox"]:checked::before {
+    left: 26px;
+}
+
+.toggle-switch label {
+    margin: 0;
+    cursor: pointer;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* ============================
+   월별 출석부
+   ============================ */
+
+.monthly-attendance-section {
+    margin-top: 2rem;
+}
+
+.attendance-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.month-selector {
+    padding: 0.8rem 1.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.month-selector:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.monthly-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.monthly-stat-card {
+    background: var(--bg-secondary);
+    padding: 1.2rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.monthly-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon-small {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: white;
+}
+
+.stat-icon-small.present {
+    background: linear-gradient(135deg, var(--secondary-color), #059669);
+}
+
+.stat-icon-small.time {
+    background: linear-gradient(135deg, var(--primary-color), #2563eb);
+}
+
+.stat-icon-small.total {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.monthly-stat-card h4 {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+}
+
+.stat-value-small {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.attendance-table-wrapper {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.attendance-table thead {
+    background: var(--bg-secondary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.attendance-table th {
+    padding: 0.8rem 0.6rem;
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.attendance-table th.student-name {
+    text-align: left;
+    padding-left: 1rem;
+    min-width: 100px;
+}
+
+.attendance-table th.summary-col {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+.attendance-table td {
+    padding: 0.8rem 0.6rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.attendance-table td.student-name {
+    text-align: left;
+    padding-left: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.attendance-table tbody tr:hover {
+    background: var(--bg-secondary);
+}
+
+/* 출결 상태 표시 */
+.attendance-status {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.attendance-status.present {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--secondary-color);
+}
+
+.attendance-status.absent {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger-color);
+}
+
+.attendance-status.outing {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning-color);
+}
+
+.attendance-status.early {
+    background: rgba(139, 92, 246, 0.2);
+    color: #8b5cf6;
+}
+
+.attendance-status.late {
+    background: rgba(236, 72, 153, 0.2);
+    color: #ec4899;
+}
+
+.attendance-status.weekend {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+/* 통계 셀 강조 */
+.summary-cell {
+    font-weight: 600;
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.summary-cell.highlight {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+}
+
+/* 교관 모드 - 출석 상태 스타일 */
+body.instructor-mode .attendance-status.present {
+    background: transparent;
+    color: #ffffff;
+}
+
+/* ============================
+   Teams 미팅 일정 (로그형)
+   ============================ */
+
+.meeting-scheduler-section {
+    margin-top: 2rem;
+}
+
+.meetings-info-box {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-primary);
+}
+
+.meetings-info-box i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.meetings-info-box p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.meetings-log-container {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    padding: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.no-meetings-log {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 2px dashed var(--border-color);
+}
+
+.no-meetings-log i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.no-meetings-log p {
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+    font-weight: 600;
+}
+
+.no-meetings-log small {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.meeting-log-entry {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-color);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.meeting-log-entry:last-child {
+    margin-bottom: 0;
+}
+
+.meeting-log-entry:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow);
+}
+
+/* 오늘 수업 강조 */
+.meeting-log-entry.today-log {
+    background: rgba(16, 185, 129, 0.1);
+    border-left-color: var(--secondary-color);
+    border-left-width: 4px;
+}
+
+.meeting-log-entry.tomorrow-log {
+    border-left-color: #6366f1;
+    border-left-width: 4px;
+}
+
+.meeting-log-entry.past-log {
+    opacity: 0.6;
+    border-left-color: var(--text-secondary);
+}
+
+.meeting-log-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.meeting-log-entry.today-log .meeting-log-icon {
+    background: linear-gradient(135deg, var(--secondary-color), #059669);
+}
+
+.meeting-log-entry.past-log .meeting-log-icon {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+}
+
+.meeting-log-text {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+}
+
+.meeting-log-entry.today-log .meeting-log-text {
+    font-weight: 600;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .meeting-log-entry {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    
+    .meeting-log-icon {
+        margin-top: 0.2rem;
+    }
+    
+    .meeting-log-text {
+        font-size: 0.9rem;
+    }
+}
+
+/* ============================
+   푸터
+   ============================ */
+
+.dashboard-footer {
+    background: var(--bg-card);
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.dashboard-footer p {
+    margin: 0.3rem 0;
+}
+
+/* ============================
+   반응형 디자인
+   ============================ */
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header-right {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .theme-toggle-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .control-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-section {
+        grid-template-columns: 1fr;
+    }
+
+    .agent-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================
+   스크롤바 스타일링
+   ============================ */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
