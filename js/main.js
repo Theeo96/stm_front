@@ -76,25 +76,23 @@ async function fetchAndUpdateData() {
         if (window.Store.state.isMonitoring) {
             const newStudentData = await window.apiService.fetchStudents();
 
-            // User requested: Full overwrite with new JSON, but we must preserve local state (warnings).
-            // Logic: Take new list, map warnings from old list if exists.
-            const currentStudents = window.Store.state.students || [];
+            // User requested: 
+            // 1. If empty [], CLEAR list (no data).
+            // 2. If populated [{...}], MERGE with existing (partial update), preserving existing students not in payload?
+            //    Wait, user said: "이 '엄태홍' 에 대한 정보들만 따로 갱신되는거는 좋긴 하거든?" (Updating only 'Um' is good)
+            //    "기존의 4명이 표시된 채로" (Existing 4 remain displayed)
+            //    So "Merge" is indeed what they want for populated arrays.
 
-            const processedStudents = newStudentData.map(newStudent => {
-                const existing = currentStudents.find(c => c.id === newStudent.id || c.name === newStudent.name);
-                // Preserve warnings, otherwise take new data's warning (or 0)
-                const preservedWarnings = (existing && existing.warnings !== undefined) ? existing.warnings : (newStudent.warnings || 0);
-
-                // Process static info/status/lastSeen using apiService helpers if needed, 
-                // but if fetchStudents already processed it (it does calls _processStudentData), we just need to merge warnings.
-                // fetchStudents returns processed data (with derived status etc).
-                return {
-                    ...newStudent,
-                    warnings: preservedWarnings
-                };
-            });
-
-            window.Store.setStudents(processedStudents);
+            if (Array.isArray(newStudentData) && newStudentData.length === 0) {
+                // Case 1: Empty Array -> Clear All
+                window.Store.setStudents([]);
+            } else if (Array.isArray(newStudentData) && newStudentData.length > 0) {
+                // Case 2: Populated Array -> Merge (Partial Update)
+                // We use the apiService.mergeStudentData which already has the warning preservation logic.
+                const currentStudents = window.Store.state.students || [];
+                const mergedStudents = window.apiService.mergeStudentData(currentStudents, newStudentData);
+                window.Store.setStudents(mergedStudents);
+            }
 
             if (window.Students) {
                 window.Students.render();
