@@ -105,6 +105,7 @@ async function fetchAndUpdateData() {
         }
     }
 }
+window.fetchAndUpdateData = fetchAndUpdateData;
 
 function startDataUpdateLoop() {
     // 5초마다 데이터 갱신 (기본)
