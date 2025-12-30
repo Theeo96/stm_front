@@ -89,8 +89,10 @@ export const apiService = {
         const merged = { ...student, ...staticInfo };
 
         // 2. Init Last Seen (First arrival time)
-        // If JSON has no last_seen, use NOW.
-        merged.last_seen = new Date().toISOString();
+        // Only if not present (preserve backend history)
+        if (!merged.last_seen) {
+            merged.last_seen = new Date().toISOString();
+        }
 
         // 3. Status Derivation
         merged.status = this._deriveStatus(merged);
@@ -99,7 +101,9 @@ export const apiService = {
         merged.lastSeenText = this._formatLastSeen(merged.last_seen, merged.face_detected);
 
         // 5. Init Warnings
-        merged.warnings = 0;
+        if (merged.warnings === undefined) {
+            merged.warnings = 0;
+        }
 
         return merged;
     },
@@ -128,7 +132,7 @@ export const apiService = {
         const now = new Date();
         const diffSeconds = Math.floor((now - lastSeenDate) / 1000);
 
-        if (diffSeconds < 5) return '지금';
+        if (diffSeconds < 1) return '지금';
 
         const mins = Math.floor(diffSeconds / 60);
         const secs = diffSeconds % 60;
