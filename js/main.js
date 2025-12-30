@@ -84,9 +84,7 @@ async function fetchAndUpdateData() {
             Students.render();
             Students.updateStatistics();
 
-            // Attendance Data Sync
-            const monthlyData = Attendance.generateMonthlyAttendanceData(store.currentYear, store.currentMonth);
-            setMonthlyAttendanceData(monthlyData);
+
         }
 
         // Meetings
@@ -125,7 +123,7 @@ function pauseLiveMonitoring() {
     Agents.updateAgentStatus('monitor', 'standby');
 }
 
-function stopLiveMonitoring() {
+async function stopLiveMonitoring() {
     if (monitoringInterval) {
         clearInterval(monitoringInterval);
         monitoringInterval = null;
@@ -134,13 +132,16 @@ function stopLiveMonitoring() {
     // 감시 Agent 비활성화 (데이터 삭제)
     Agents.updateAgentStatus('monitor', 'inactive');
 
-    // Clear Data UI on Stop
+    // Clear Data UI on Stop (Instant feedback)
     setStudents([]);
     Students.render();
     Students.updateStatistics();
 
-    // Backend Clear
-    apiService.clearStudents().then(success => {
-        if (success) console.log('Backend data cleared');
-    });
+    // Backend Clear (Ensure server cache is wiped)
+    const success = await apiService.clearStudents();
+    if (success) {
+        console.log('Backend data cleared successfully');
+    } else {
+        console.error('Failed to clear backend data');
+    }
 }
