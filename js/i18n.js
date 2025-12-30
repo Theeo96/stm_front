@@ -51,6 +51,8 @@ const translations = {
         'student.name': '이름',
         'student.phone': '연락처',
         'student.isIn': '회의 참석',
+        'student.isIn.true': '참여',
+        'student.isIn.false': '미참여',
         'student.status': '상태',
         'student.camera': '카메라',
         'student.lastSeen': '마지막 확인',

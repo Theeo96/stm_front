@@ -9,43 +9,95 @@
     window.Meetings.render = function () {
         const container = document.getElementById('meetingsLogContainer');
         if (!container) return;
-        container.innerHTML = '';
 
         const meetings = window.Store.state.scheduledMeetings || [];
+        const t = window.translate || ((k) => k);
+        const currentLanguage = localStorage.getItem('language') || 'ko';
 
         if (meetings.length === 0) {
-            container.innerHTML = '<p style="padding:10px; color:#666;">예정된 수업이 없습니다.</p>';
+            container.innerHTML = `
+                <div class="no-meetings-log">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>${t('meeting.none') || '예정된 수업 없음'}</p>
+                    <small>${t('meeting.none.detail') || '현재 예약된 수업 일정이 없습니다.'}</small>
+                </div>
+            `;
             return;
         }
 
+        container.innerHTML = '';
+
         meetings.forEach(meeting => {
-            const div = document.createElement('div');
-            div.className = 'meeting-item'; // Assume css class
-            div.innerHTML = `<strong>${meeting.title}</strong><br>${meeting.time} (${meeting.instructor})`;
-            container.appendChild(div);
+            const logEntry = document.createElement('div');
+            logEntry.className = 'meeting-log-entry';
+
+            const dateObj = new Date(meeting.date);
+            let logMessage = '';
+
+            if (currentLanguage === 'ko') {
+                const year = dateObj.getFullYear();
+                const month = dateObj.getMonth() + 1;
+                const day = dateObj.getDate();
+                const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                const weekday = weekdays[dateObj.getDay()];
+                logMessage = `${year}년 ${month}월 ${day}일 ${weekday} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" 수업 모임 예약되었습니다.`;
+            } else if (currentLanguage === 'ja') {
+                const year = dateObj.getFullYear();
+                const month = dateObj.getMonth() + 1;
+                const day = dateObj.getDate();
+                const weekdays = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
+                const weekday = weekdays[dateObj.getDay()];
+                logMessage = `${year}年${month}月${day}日 ${weekday} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" 授業ミーティングが予約されました。`;
+            } else if (currentLanguage === 'zh') {
+                const year = dateObj.getFullYear();
+                const month = dateObj.getMonth() + 1;
+                const day = dateObj.getDate();
+                const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                const weekday = weekdays[dateObj.getDay()];
+                logMessage = `${year}年${month}月${day}日 ${weekday} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" 课程会议已预约。`;
+            } else if (currentLanguage === 'ar') {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const dateString = dateObj.toLocaleDateString('ar-SA', options);
+                logMessage = `${dateString} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" تم حجز اجتماع الفصل.`;
+            } else { // English
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const dateString = dateObj.toLocaleDateString('en-US', options);
+                logMessage = `${dateString} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" class meeting has been scheduled.`;
+            }
+
+            // 오늘/내일/지난 날짜 판단
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const meetingDate = new Date(meeting.date);
+            meetingDate.setHours(0, 0, 0, 0);
+
+            let logClass = '';
+            const dayDiff = Math.floor((meetingDate - today) / (1000 * 60 * 60 * 24));
+
+            if (dayDiff === 0) {
+                logClass = 'today-log';
+            } else if (dayDiff === 1) {
+                logClass = 'tomorrow-log';
+            } else if (dayDiff < 0) {
+                logClass = 'past-log';
+            }
+
+            if (logClass) logEntry.classList.add(logClass);
+
+            logEntry.innerHTML = `
+                <div class="meeting-log-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="meeting-log-text">${logMessage}</div>
+            `;
+
+            container.appendChild(logEntry);
         });
     };
 
     function setupEventListeners() {
         const btn = document.getElementById('refreshMeetings');
         if (btn) btn.addEventListener('click', () => {
-            // trigger refresh in main
-            const fetchAndUpdate = window.fetchAndUpdateData; // May not be global? 
-            // main.js defines fetchAndUpdateData specifically but didn't attach to window.
-            // It does start an interval. 
-            // We can assume main.js listens to button or we dispatch event.
-            // main.js does NOT listen to custom event 'refreshMeetings' in previous read.
-            // But button ID 'refreshMeetings' click in main.js is NOT handled.
-            // Wait, if I am defining listener here, I need to know what to call.
-            // I will dispatch 'refreshMeetings' and hope main.js picks it up?
-            // NO, I should fix main.js to listen OR fetch here.
-            // Can't fetch here easily (apiService is global).
-            // Let's call apiService and update Store manually?
-            // Better: window.dispatchEvent(new Event('refreshMeetings')); 
-            // AND update main.js to listen? 
-            // User wants "complete legacy identity". Legacy probably just re-ran a function.
-            // I will just make it reload the page (simple) or call fetchAndUpdateData if exposed.
-            // I'll expose fetchAndUpdateData in main.js
             if (window.fetchAndUpdateData) window.fetchAndUpdateData();
         });
     }

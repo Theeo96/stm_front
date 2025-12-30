@@ -35,7 +35,10 @@
     };
 
     window.Controls.stopMonitoring = function () {
-        if (window.Store) window.Store.state.isMonitoring = false;
+        if (window.Store) {
+            window.Store.state.isMonitoring = false;
+            window.Store.setStudents([]); // 데이터 비우기
+        }
         updateControlButtons();
         updateSystemStatus('standby');
         if (window.Agents) window.Agents.updateAgentStatus('monitor', 'inactive');
