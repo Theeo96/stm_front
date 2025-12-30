@@ -1,58 +1,76 @@
-import { state } from '../store.js';
+(function () {
+    window.Logging = {};
 
-// ============================
-// 활동 로그 관리
-// ============================
-
-export function init() {
-    startActivityLogUpdate();
-}
-
-// 활동 로그 추가
-export function addActivityLog(type, message, logType = 'info') {
-    const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
-    const logEntry = {
-        time,
-        type,
-        message,
-        logType
+    window.Logging.init = function () {
+        // Init logic if needed
     };
 
-    // Store에 추가 (UI 업데이트는 리스너 패턴으로 처리 가능하지만, 
-    // 여기서는 간단히 직접 렌더링 호출을 유지하거나 store 구독을 활용)
-    // store.addActivityLog(logEntry);  <-- store에 메서드 있다면 사용
+    // 활동 로그 렌더링 (다국어 지원)
+    window.Logging.render = function () {
+        const logContainer = document.getElementById('activityLog');
+        if (!logContainer) return;
 
-    // UI 직접 업데이트 (기존 로직 유지)
-    const logContainer = document.getElementById('activityLog');
-    if (!logContainer) return;
+        // Store에서 로그 목록 가져오기
+        const logs = window.Store && window.Store.state ? window.Store.state.activityLogs : [];
+        if (!logs) return;
 
-    const logElement = document.createElement('div');
-    logElement.className = 'log-entry';
-    logElement.innerHTML = `
-        <span class="log-time">[${time}]</span>
-        <span class="log-type ${logType}">${getLogTypeLabel(type)}</span>
-        <span class="log-message">${message}</span>
-    `;
+        // 컨테이너 비우기
+        logContainer.innerHTML = '';
 
-    logContainer.prepend(logElement);
+        // 로그 다시 그리기
+        logs.forEach(log => {
+            const logElement = document.createElement('div');
+            logElement.className = 'log-entry';
 
-    // 로그 50개 유지
-    if (logContainer.children.length > 50) {
-        logContainer.removeChild(logContainer.lastChild);
-    }
-}
+            // 로그 타입 번역 (ex: 'log.type.info' -> '정보')
+            // log.type이 'info', 'success' 등인 경우 번역됨
+            const typeKey = `log.type.${log.logType}`;
+            // window.translate 함수가 있으면 사용, 없으면 기본값
+            const localizedType = window.translate ? window.translate(typeKey) : (log.logType || 'Info');
 
-function getLogTypeLabel(type) {
-    switch (type) {
-        case '시스템': return 'SYSTEM';
-        case '경고': return 'WARNING';
-        case '알림': return 'NOTICE';
-        case '출석': return 'ATTENDANCE';
-        default: return type;
-    }
-}
+            // 만약 번역이 안되어서 키가 그대로 나오면, 그냥 logType을 대문자로 표시
+            const displayType = localizedType === typeKey ? log.logType : localizedType;
 
-// 활동 로그 자동 업데이트 시뮬레이션
-function startActivityLogUpdate() {
-    // 필요 시 주기적 로그 생성 로직
-}
+            logElement.innerHTML = `
+                <span class="log-time">${log.time}</span>
+                <span class="log-type ${log.logType}">${displayType}</span>
+                <span class="log-message">${log.message}</span>
+            `;
+
+            logContainer.appendChild(logElement);
+        });
+    };
+
+    window.Logging.addActivityLog = function (type, message, logType = 'info') {
+        const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+        const logEntry = {
+            time,
+            type, // 출처 (예: '시스템', 'Teams') - 메시지에 포함됨
+            message, // 전체 메시지 문자열
+            logType // 'info', 'success', 'warning', 'error'
+        };
+
+        // Store 업데이트
+        if (window.Store && window.Store.addActivityLog) {
+            window.Store.addActivityLog(logEntry);
+        }
+
+        // UI 업데이트 - 전체 다시 그리기 (언어 변경 대응을 위해)
+        // 성능 이슈가 있을 경우 prepend 방식과 render 방식을 분리할 수 있으나, 
+        // 로그 50개 제한이므로 전체 다시 그리기도 무방합니다.
+        // 일관성을 위해 render 호출로 통일합니다.
+        window.Logging.render();
+    };
+
+    window.Logging.getLogTypeLabel = function (type) {
+        const typeKey = `log.type.${type}`;
+        return window.translate ? window.translate(typeKey) : type;
+    };
+
+    // 언어 변경 이벤트 감지
+    window.addEventListener('languageChanged', function () {
+        if (window.Logging && window.Logging.render) {
+            window.Logging.render();
+        }
+    });
+})();

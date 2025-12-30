@@ -1,123 +1,101 @@
-import { state, setMonitoringState } from '../store.js';
-import { addActivityLog } from './logging.js';
+(function () {
+    window.Controls = {};
 
-// ============================
-// 감독 제어 (Control Panel)
-// ============================
+    window.Controls.init = function () {
+        setupEventListeners();
+        updateControlButtons();
+    };
 
-export function init() {
-    setupEventListeners();
-}
+    function setupEventListeners() {
+        const startBtn = document.getElementById('startMonitoring');
+        const stopBtn = document.getElementById('stopMonitoring');
+        const pauseBtn = document.getElementById('pauseMonitoring');
+        const alertBtn = document.getElementById('emergencyAlert');
 
-function setupEventListeners() {
-    document.getElementById('startMonitoring').addEventListener('click', startMonitoring);
-    document.getElementById('stopMonitoring').addEventListener('click', stopMonitoring);
-    document.getElementById('pauseMonitoring').addEventListener('click', pauseMonitoring);
-    document.getElementById('emergencyAlert').addEventListener('click', sendEmergencyAlert);
-}
-
-// 모니터링 시작
-function startMonitoring() {
-    if (state.isMonitoring) return;
-
-    // 회의 URL 확인
-    const conferenceUrlInput = document.getElementById('conferenceUrl');
-    const conferenceUrl = conferenceUrlInput ? conferenceUrlInput.value : '';
-
-    if (conferenceUrl && conferenceUrl.trim() !== '') {
-        console.log(`[Monitoring] Target URL: ${conferenceUrl}`);
-        // 추후 curl 명령어 전송 로직 추가
-    } else {
-        console.warn('[Monitoring] No conference URL provided.');
+        if (startBtn) { startBtn.removeEventListener('click', window.Controls.startMonitoring); startBtn.addEventListener('click', window.Controls.startMonitoring); }
+        if (stopBtn) { stopBtn.removeEventListener('click', window.Controls.stopMonitoring); stopBtn.addEventListener('click', window.Controls.stopMonitoring); }
+        if (pauseBtn) { pauseBtn.removeEventListener('click', window.Controls.pauseMonitoring); pauseBtn.addEventListener('click', window.Controls.pauseMonitoring); }
+        if (alertBtn) { alertBtn.removeEventListener('click', sendEmergencyAlert); alertBtn.addEventListener('click', sendEmergencyAlert); }
     }
 
-    setMonitoringState(true);
-    updateControlButtons();
-    updateSystemStatus('monitoring');
+    window.Controls.startMonitoring = function () {
+        if (window.Store.state.isMonitoring) return;
+        if (window.Store) window.Store.setMonitoringState(true);
+        updateControlButtons();
+        updateSystemStatus('monitoring');
 
-    addActivityLog('시스템', window.translate('log.system.start'), 'success');
+        if (window.Agents) window.Agents.updateAgentStatus('monitor', 'active');
 
-    // 메인 로직에서 polling 시작을 트리거할 수 있도록 이벤트 호출 혹은 콜백 필요
-    // 여기서는 CustomEvent를 dispatch하여 main.js가 감지하게 함
-    window.dispatchEvent(new CustomEvent('monitoringStarted'));
-}
-
-// 모니터링 종료
-function stopMonitoring() {
-    if (!state.isMonitoring) return;
-
-    setMonitoringState(false);
-    updateControlButtons();
-    updateSystemStatus('standby');
-
-    addActivityLog('시스템', window.translate('log.system.stop'), 'warning');
-
-    window.dispatchEvent(new CustomEvent('monitoringStopped'));
-}
-
-// 일시 정지
-function pauseMonitoring() {
-    if (!state.isMonitoring) return;
-
-    setMonitoringState(false);
-    updateControlButtons();
-    updateSystemStatus('standby'); // 'paused' 상태가 따로 있다면 추가 필요
-
-    addActivityLog('시스템', window.translate('log.system.pause'), 'warning');
-
-    window.dispatchEvent(new CustomEvent('monitoringPaused')); // 일시정지 이벤트 분리
-}
-
-// 긴급 공지
-function sendEmergencyAlert() {
-    const message = prompt(window.translate('prompt.emergency'));
-    if (message) {
-        addActivityLog('경고', `${window.translate('log.emergency')}: ${message}`, 'error');
-        alert(`${window.translate('alert.sent')}: ${message}`);
-    }
-}
-
-// 제어 버튼 상태 업데이트
-function updateControlButtons() {
-    const startBtn = document.getElementById('startMonitoring');
-    const stopBtn = document.getElementById('stopMonitoring');
-    const pauseBtn = document.getElementById('pauseMonitoring');
-
-    if (state.isMonitoring) {
-        startBtn.disabled = true;
-        stopBtn.disabled = false;
-        pauseBtn.disabled = false;
-        startBtn.classList.add('disabled');
-    } else {
-        startBtn.disabled = false;
-        stopBtn.disabled = true;
-        pauseBtn.disabled = true;
-        startBtn.classList.remove('disabled');
-    }
-}
-
-// 시스템 상태 표시 업데이트
-function updateSystemStatus(status) {
-    const statusText = document.getElementById('systemStatusText');
-    const statusIcon = document.getElementById('systemStatusIcon');
-    const statusBadges = document.querySelectorAll('.status-badge');
-
-    statusBadges.forEach(badge => {
-        badge.className = 'status-badge'; // reset
-        if (status === 'monitoring') {
-            badge.classList.add('monitoring');
-        } else {
-            badge.classList.add('standby');
+        if (window.Logging) {
+            const t = window.translate || ((k) => k);
+            window.Logging.addActivityLog(t('log.type.success') || '성공', `[${t('log.category.monitor') || '감독'}] ${t('log.monitoring.started') || '모니터링 시작'}`, 'success');
         }
-    });
 
-    if (status === 'monitoring') {
-        statusText.setAttribute('data-i18n', 'system.monitoring');
-        statusText.textContent = window.translate('system.monitoring');
-        statusIcon.className = 'fas fa-video';
-    } else {
-        statusText.setAttribute('data-i18n', 'system.standby');
-        statusText.textContent = window.translate('system.standby');
-        statusIcon.className = 'fas fa-video-slash';
+        window.dispatchEvent(new CustomEvent('monitoringStarted'));
+    };
+
+    window.Controls.stopMonitoring = function () {
+        if (window.Store) window.Store.state.isMonitoring = false;
+        updateControlButtons();
+        updateSystemStatus('standby');
+        if (window.Agents) window.Agents.updateAgentStatus('monitor', 'inactive');
+
+        if (window.Logging) {
+            const t = window.translate || ((k) => k);
+            window.Logging.addActivityLog(t('log.type.warning') || '경고', `[${t('log.category.monitor') || '감독'}] ${t('log.monitoring.stopped') || '모니터링 중지'}`, 'warning');
+        }
+
+        window.dispatchEvent(new CustomEvent('monitoringStopped'));
+    };
+
+    window.Controls.pauseMonitoring = function () {
+        if (window.Store) window.Store.state.isMonitoring = false;
+        updateControlButtons();
+        updateSystemStatus('standby');
+        if (window.Agents) window.Agents.updateAgentStatus('monitor', 'standby');
+
+        if (window.Logging) {
+            const t = window.translate || ((k) => k);
+            window.Logging.addActivityLog(t('log.type.warning') || '경고', `[${t('log.category.monitor') || '감독'}] ${t('log.monitoring.paused') || '모니터링 일시정지'}`, 'warning');
+        }
+
+        window.dispatchEvent(new CustomEvent('monitoringPaused'));
+    };
+
+    function sendEmergencyAlert() {
+        if (window.Logging) {
+            const t = window.translate || ((k) => k);
+            window.Logging.addActivityLog(t('log.type.error') || '오류', `[긴급] ${t('log.emergency.sent') || '긴급 공지 발송'}`, 'error');
+        }
+        alert('🚨 긴급 공지가 모든 수강생에게 발송되었습니다.');
     }
-}
+
+    function updateControlButtons() {
+        const isMonitoring = window.Store.state.isMonitoring;
+        const startBtn = document.getElementById('startMonitoring');
+        const stopBtn = document.getElementById('stopMonitoring');
+        const pauseBtn = document.getElementById('pauseMonitoring');
+
+        if (startBtn) startBtn.disabled = isMonitoring;
+        if (stopBtn) stopBtn.disabled = !isMonitoring;
+        if (pauseBtn) pauseBtn.disabled = !isMonitoring;
+    }
+
+    function updateSystemStatus(status) {
+        const statusBadge = document.getElementById('systemStatusBadge');
+        const statusIcon = document.getElementById('systemStatusIcon');
+        const statusText = document.getElementById('systemStatusText');
+
+        if (!statusBadge || !statusIcon || !statusText) return;
+
+        statusBadge.className = 'status-badge';
+        if (status === 'monitoring') {
+            statusBadge.classList.add('monitoring');
+            statusIcon.style.color = '#10B981';
+            statusText.textContent = window.translate ? window.translate('system.monitoring') : 'System Monitoring';
+        } else {
+            statusIcon.style.color = '#fff';
+            statusText.textContent = window.translate ? window.translate('system.standby') : 'System Standby';
+        }
+    }
+})();
