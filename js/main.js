@@ -104,4 +104,9 @@ function stopLiveMonitoring() {
         clearInterval(monitoringInterval);
         monitoringInterval = null;
     }
+
+    // Clear Data UI on Stop
+    setStudents([]);
+    Students.render();
+    Students.updateStatistics();
 }

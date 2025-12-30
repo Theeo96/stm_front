@@ -9,6 +9,7 @@ const MOCK_DATA = {
     students: [
         {
             id: 1,
+            num: '8ai001',
             name: '엄태홍',
             phone: '010-1234-5678',
             status: 'online',
@@ -19,6 +20,7 @@ const MOCK_DATA = {
         },
         {
             id: 2,
+            num: '8ai002',
             name: '권순우',
             phone: '010-2345-6789',
             status: 'online',
@@ -29,6 +31,7 @@ const MOCK_DATA = {
         },
         {
             id: 3,
+            num: '8ai003',
             name: 'Sammy',
             phone: '010-8901-2345',
             status: 'away',
