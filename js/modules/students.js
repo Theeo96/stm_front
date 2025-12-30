@@ -17,7 +17,7 @@ export function render() {
 
     // store의 students 데이터 사용
     if (!state.students || state.students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No Data</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 20px;">No Data</td></tr>';
         return;
     }
 
@@ -26,20 +26,23 @@ export function render() {
 
         // 상태 뱃지
         let statusBadge = '';
+        const statusKey = `student.status.${student.status}`; // Corrected key mapping
+        const statusText = window.translate(statusKey) === statusKey ? student.status : window.translate(statusKey); // Fallback to raw if logic fails
+
         if (student.status === 'online') {
-            statusBadge = `<span class="status-badge-table online"><i class="fas fa-circle"></i> ${window.translate('status.online')}</span>`;
+            statusBadge = `<span class="status-badge-table online"><i class="fas fa-circle"></i> ${statusText}</span>`;
         } else if (student.status === 'away') {
-            statusBadge = `<span class="status-badge-table away"><i class="fas fa-clock"></i> ${window.translate('status.away')}</span>`;
+            statusBadge = `<span class="status-badge-table away"><i class="fas fa-clock"></i> ${statusText}</span>`;
         } else {
-            statusBadge = `<span class="status-badge-table offline"><i class="fas fa-times-circle"></i> ${window.translate('status.offline')}</span>`;
+            statusBadge = `<span class="status-badge-table offline"><i class="fas fa-times-circle"></i> ${statusText}</span>`;
         }
 
         // 카메라 상태
         let cameraStatus = '';
         if (student.camera) {
-            cameraStatus = `<span class="camera-status on" title="${window.translate('camera.on')}"><i class="fas fa-video"></i> ON</span>`;
+            cameraStatus = `<span class="camera-status on" title="${window.translate('student.camera.on')}"><i class="fas fa-video"></i> ON</span>`;
         } else {
-            cameraStatus = `<span class="camera-status off" title="${window.translate('camera.off')}"><i class="fas fa-video-slash"></i> OFF</span>`;
+            cameraStatus = `<span class="camera-status off" title="${window.translate('student.camera.off')}"><i class="fas fa-video-slash"></i> OFF</span>`;
         }
 
         // 얼굴 인식
@@ -52,21 +55,26 @@ export function render() {
         // 마지막 감지 (API에서 처리된 key/value 사용)
         const lastSeenText = window.translate(`time.${student.lastSeenKey}`, { value: student.lastSeenValue });
 
+        // 번호 처리 (JSON에 num이 있으면 사용, 없으면 id 사용)
+        const studentNum = student.num || student.id;
+
         tr.innerHTML = `
+            <td>${studentNum}</td>
             <td>${student.name}</td>
+            <td>${student.phone || '-'}</td>
             <td>${statusBadge}</td>
             <td>${cameraStatus}</td>
             <td>${lastSeenText}</td>
             <td><span class="warning-count">${student.warnings}</span></td>
             <td>
                 <div class="action-buttons">
-                    <button class="action-btn message-btn" onclick="window.moduleActions.sendMessage(${student.id})" title="${window.translate('action.message')}">
+                    <button class="action-btn message-btn" onclick="window.moduleActions.sendMessage(${student.id})" title="${window.translate('student.action.message')}">
                         <i class="fas fa-comment-alt"></i>
                     </button>
-                    <button class="action-btn phone-btn" onclick="window.moduleActions.makePhoneCall(${student.id})" title="${window.translate('action.call')}">
+                    <button class="action-btn phone-btn" onclick="window.moduleActions.makePhoneCall(${student.id})" title="${window.translate('student.action.call')}">
                         <i class="fas fa-phone"></i>
                     </button>
-                    <button class="action-btn alert-btn-table" onclick="window.moduleActions.sendAlert(${student.id})" title="${window.translate('action.warn')}">
+                    <button class="action-btn alert-btn-table" onclick="window.moduleActions.sendAlert(${student.id})" title="${window.translate('student.action.alert')}">
                         <i class="fas fa-exclamation-circle"></i>
                     </button>
                 </div>
