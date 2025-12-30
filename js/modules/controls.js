@@ -68,7 +68,7 @@
     function sendEmergencyAlert() {
         if (window.Logging) {
             const t = window.translate || ((k) => k);
-            window.Logging.addActivityLog(t('log.type.error') || '오류', `[긴급] ${t('log.emergency.sent') || '긴급 공지 발송'}`, 'error');
+            window.Logging.addActivityLog(t('log.type.info') || '정보', `[긴급] ${t('log.emergency.sent') || '긴급 공지 발송'}`, 'info');
         }
         alert('🚨 긴급 공지가 모든 수강생에게 발송되었습니다.');
     }

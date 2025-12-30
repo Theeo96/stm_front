@@ -42,7 +42,8 @@
     };
 
     window.Logging.addActivityLog = function (type, message, logType = 'info') {
-        const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+        const now = new Date();
+        const time = `${now.getHours()}시 ${now.getMinutes()}분 ${now.getSeconds()}초`;
         const logEntry = {
             time,
             type, // 출처 (예: '시스템', 'Teams') - 메시지에 포함됨
