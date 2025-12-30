@@ -25,6 +25,9 @@ window.apiService = {
                 return {
                     ...existing,
                     ...incoming,
+                    // Preserve warnings from local state if incoming is likely reset/default, 
+                    // or take max if we assume sync. specific request: actions increment it locally.
+                    warnings: (existing.warnings !== undefined) ? existing.warnings : (incoming.warnings || 0),
                     // Re-calculate derived fields if needed
                     status: this._deriveStatus(incoming),
                     lastSeenText: this._formatLastSeen(incoming.last_seen || existing.last_seen, incoming.face_detected)
