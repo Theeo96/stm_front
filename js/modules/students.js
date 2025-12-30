@@ -52,8 +52,8 @@ export function render() {
             cameraStatus += ` <span class="camera-status off" title="${window.translate('face.notDetected')}"><i class="fas fa-meh-blank"></i></span>`;
         }
 
-        // 마지막 감지 (API에서 처리된 key/value 사용)
-        const lastSeenText = window.translate(`time.${student.lastSeenKey}`, { value: student.lastSeenValue });
+        // 마지막 감지 (API에서 처리된 텍스트 사용)
+        const lastSeenText = student.lastSeenText || '확인 불가';
 
         // 번호 처리 (JSON에 num이 있으면 사용, 없으면 id 사용)
         const studentNum = student.num || student.id;
