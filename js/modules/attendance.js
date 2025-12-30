@@ -10,14 +10,25 @@ export function init() {
     setupEventListeners();
 }
 
+
+
 function setupEventListeners() {
-    document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
-    document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
-    document.getElementById('monthSelector').addEventListener('change', function () {
-        const [year, month] = this.value.split('-').map(Number);
-        updateDate(year, month - 1);
-    });
+    const prevBtn = document.getElementById('prevMonth');
+    const nextBtn = document.getElementById('nextMonth');
+    const monthSelector = document.getElementById('attendanceMonth'); // ID changed from monthSelector
+
+    if (prevBtn) prevBtn.addEventListener('click', () => changeMonth(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => changeMonth(1));
+
+    if (monthSelector) {
+        monthSelector.addEventListener('change', function () {
+            const [year, month] = this.value.split('-').map(Number);
+            updateDate(year, month - 1);
+        });
+    }
 }
+
+
 
 function updateDate(year, month) {
     state.currentYear = year;
@@ -52,7 +63,7 @@ function changeMonth(delta) {
 }
 
 function populateMonthSelector() {
-    const selector = document.getElementById('monthSelector');
+    const selector = document.getElementById('attendanceMonth');
     if (!selector) return;
 
     const today = new Date();
