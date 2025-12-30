@@ -53,8 +53,13 @@ let agentSettings = {};
 // ============================
 
 document.addEventListener('DOMContentLoaded', function() {
+    initializeLanguage();
     initializeTheme();
     loadAgentSettings();
+    
+    // 초기 로그 추가
+    addActivityLog('시스템', translate('log.system.init'), 'info');
+    
     renderStudentTable();
     updateStatistics();
     initializeMonthlyAttendance();
@@ -62,6 +67,52 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     startActivityLogUpdate();
 });
+
+// ============================
+// 언어 관리
+// ============================
+
+function initializeLanguage() {
+    const savedLang = localStorage.getItem('language') || 'ko';
+    applyTranslations(savedLang);
+    
+    // 활성 언어 옵션 표시
+    updateActiveLanguage(savedLang);
+}
+
+function toggleLanguageDropdown() {
+    const dropdown = document.getElementById('languageDropdown');
+    dropdown.classList.toggle('show');
+}
+
+function selectLanguage(lang) {
+    applyTranslations(lang);
+    updateActiveLanguage(lang);
+    
+    // 드롭다운 닫기
+    document.getElementById('languageDropdown').classList.remove('show');
+    
+    // 활동 로그에 기록
+    addActivityLog('시스템', translate('log.system.languageChanged', lang, { language: languageNames[lang] }), 'info');
+    
+    // 테마 라벨 업데이트
+    updateThemeLabel();
+}
+
+function updateActiveLanguage(lang) {
+    document.querySelectorAll('.language-option').forEach(option => {
+        if (option.getAttribute('data-lang') === lang) {
+            option.classList.add('active');
+        } else {
+            option.classList.remove('active');
+        }
+    });
+}
+
+function updateThemeLabel() {
+    const themeLabel = document.getElementById('themeLabel');
+    themeLabel.textContent = translate(`header.theme.${currentTheme}`);
+}
 
 // ============================
 // 테마 관리
@@ -75,7 +126,6 @@ function initializeTheme() {
 
 function applyTheme(theme) {
     const body = document.body;
-    const themeLabel = document.getElementById('themeLabel');
     
     // 모든 테마 클래스 제거
     body.classList.remove('dark-mode', 'instructor-mode');
@@ -84,18 +134,17 @@ function applyTheme(theme) {
     switch(theme) {
         case 'dark':
             body.classList.add('dark-mode');
-            themeLabel.textContent = '다크 모드';
             break;
         case 'instructor':
             body.classList.add('instructor-mode');
-            themeLabel.textContent = '교관 모드';
             break;
-        default:
-            themeLabel.textContent = '라이트 모드';
     }
     
     currentTheme = theme;
     localStorage.setItem('theme', theme);
+    
+    // 테마 라벨 업데이트
+    updateThemeLabel();
 }
 
 function toggleTheme() {
@@ -106,7 +155,7 @@ function toggleTheme() {
     const nextTheme = themeOrder[nextIndex];
     
     applyTheme(nextTheme);
-    addActivityLog('시스템', `테마가 ${getThemeLabel(nextTheme)}(으)로 변경되었습니다.`, 'info');
+    addActivityLog('시스템', translate('log.system.themeChanged', currentLanguage, { theme: translate(`header.theme.${nextTheme}`) }), 'info');
 }
 
 function getThemeLabel(theme) {
@@ -130,14 +179,23 @@ function renderStudentTable() {
         
         const statusClass = student.status === 'online' ? 'online' : 
                           student.status === 'away' ? 'away' : 'offline';
-        const statusText = student.status === 'online' ? '출석' : 
-                         student.status === 'away' ? '자리비움' : '오프라인';
+        const statusText = translate(`student.status.${student.status}`);
         const statusIcon = student.status === 'online' ? 'fa-circle' : 
                           student.status === 'away' ? 'fa-clock' : 'fa-circle';
         
         const cameraClass = student.camera ? 'on' : 'off';
         const cameraIcon = student.camera ? 'fa-video' : 'fa-video-slash';
-        const cameraText = student.camera ? '켜짐' : '꺼짐';
+        const cameraText = translate(`student.camera.${student.camera ? 'on' : 'off'}`);
+        
+        const warningsText = student.warnings > 0 ? `<strong style="color: var(--danger-color);">${student.warnings}${translate('student.warnings.count')}</strong>` : translate('student.warnings.none');
+        
+        // lastSeen 번역
+        let lastSeenText = '';
+        if (student.lastSeenKey === 'justnow') {
+            lastSeenText = translate('time.justnow');
+        } else if (student.lastSeenKey === '5min') {
+            lastSeenText = student.lastSeenValue + translate('time.minutesago');
+        }
         
         row.innerHTML = `
             <td>${index + 1}</td>
@@ -155,17 +213,17 @@ function renderStudentTable() {
                     ${cameraText}
                 </span>
             </td>
-            <td>${student.lastSeen}</td>
-            <td>${student.warnings > 0 ? `<strong style="color: var(--danger-color);">${student.warnings}회</strong>` : '없음'}</td>
+            <td>${lastSeenText}</td>
+            <td>${warningsText}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="action-btn phone-btn" onclick="makePhoneCall(${student.id})" title="전화 걸기">
+                    <button class="action-btn phone-btn" onclick="makePhoneCall(${student.id})" title="${translate('student.action.call')}">
                         <i class="fas fa-phone"></i>
                     </button>
-                    <button class="action-btn message-btn" onclick="sendMessage(${student.id})" title="메시지 보내기">
+                    <button class="action-btn message-btn" onclick="sendMessage(${student.id})" title="${translate('student.action.message')}">
                         <i class="fas fa-comment"></i>
                     </button>
-                    <button class="action-btn alert-btn-table" onclick="sendAlert(${student.id})" title="알림 보내기">
+                    <button class="action-btn alert-btn-table" onclick="sendAlert(${student.id})" title="${translate('student.action.alert')}">
                         <i class="fas fa-bell"></i>
                     </button>
                 </div>
@@ -208,13 +266,13 @@ function startMonitoring() {
     
     // 시스템 상태 변경
     const statusBadge = document.getElementById('systemStatus');
-    statusBadge.innerHTML = '<i class="fas fa-circle"></i> 감독 진행중';
+    statusBadge.innerHTML = `<i class="fas fa-circle"></i> <span data-i18n="system.monitoring">${translate('system.monitoring')}</span>`;
     statusBadge.style.background = 'rgba(16, 185, 129, 0.3)';
     
     // 감시 에이전트 활성화
-    updateAgentStatus('감시 Agent', 'active');
+    updateAgentStatus(translate('agent.monitor'), 'active');
     
-    addActivityLog('감독', '감독이 시작되었습니다.', 'success');
+    addActivityLog('감독', translate('log.monitoring.started'), 'success');
     
     // 시뮬레이션: 실시간 모니터링 시작
     startRealtimeSimulation();
@@ -232,13 +290,13 @@ function stopMonitoring() {
     
     // 시스템 상태 변경
     const statusBadge = document.getElementById('systemStatus');
-    statusBadge.innerHTML = '<i class="fas fa-circle"></i> 시스템 대기중';
+    statusBadge.innerHTML = `<i class="fas fa-circle"></i> <span data-i18n="system.standby">${translate('system.standby')}</span>`;
     statusBadge.style.background = 'rgba(255, 255, 255, 0.2)';
     
     // 감시 에이전트 대기
-    updateAgentStatus('감시 Agent', 'standby');
+    updateAgentStatus(translate('agent.monitor'), 'standby');
     
-    addActivityLog('감독', '감독이 종료되었습니다.', 'warning');
+    addActivityLog('감독', translate('log.monitoring.stopped'), 'warning');
     
     // 실시간 모니터링 중지
     stopRealtimeSimulation();
@@ -247,12 +305,12 @@ function stopMonitoring() {
 function pauseMonitoring() {
     if (!isMonitoring) return;
     
-    addActivityLog('감독', '감독이 일시 정지되었습니다.', 'warning');
+    addActivityLog('감독', translate('log.monitoring.paused'), 'warning');
     alert('감독이 일시 정지되었습니다.');
 }
 
 function sendEmergencyAlert() {
-    addActivityLog('긴급', '전체 수강생에게 긴급 공지가 발송되었습니다.', 'error');
+    addActivityLog('긴급', translate('log.emergency.sent'), 'error');
     alert('🚨 긴급 공지가 모든 수강생에게 발송되었습니다.');
 }
 
@@ -271,9 +329,33 @@ function updateAgentStatus(agentName, status) {
             statusElement.classList.add(status);
             
             if (status === 'active') {
-                statusElement.innerHTML = '<i class="fas fa-circle"></i> 활성';
+                statusElement.innerHTML = `<i class="fas fa-circle"></i> ${translate('agent.status.active')}`;
             } else {
-                statusElement.innerHTML = '<i class="fas fa-circle"></i> 대기중';
+                statusElement.innerHTML = `<i class="fas fa-circle"></i> ${translate('agent.status.standby')}`;
+            }
+        }
+    });
+}
+
+function updateAgentDescriptions() {
+    const agentTypes = ['admin', 'tutor', 'monitor', 'attendance'];
+    
+    agentTypes.forEach(type => {
+        const card = document.querySelector(`.agent-card[data-agent="${type}"]`);
+        if (card) {
+            const nameElement = card.querySelector('.agent-header h3');
+            const descElement = card.querySelector('.agent-description');
+            const statusElement = card.querySelector('.agent-status');
+            
+            if (nameElement) {
+                nameElement.textContent = translate(`agent.${type}`);
+            }
+            if (descElement) {
+                descElement.textContent = translate(`agent.desc.${type}`);
+            }
+            if (statusElement) {
+                const isActive = statusElement.classList.contains('active');
+                statusElement.innerHTML = `<i class="fas fa-circle"></i> ${translate(isActive ? 'agent.status.active' : 'agent.status.standby')}`;
             }
         }
     });
@@ -312,7 +394,7 @@ function renderActivityLog() {
         logEntry.className = 'log-entry';
         logEntry.innerHTML = `
             <span class="log-time">${log.time}</span>
-            <span class="log-type ${log.type}">${getLogTypeLabel(log.type)}</span>
+            <span class="log-type ${log.type}">${translate(`log.type.${log.type}`)}</span>
             <span class="log-message">${log.message}</span>
         `;
         logContainer.appendChild(logEntry);
@@ -320,12 +402,7 @@ function renderActivityLog() {
 }
 
 function getLogTypeLabel(type) {
-    switch(type) {
-        case 'success': return '성공';
-        case 'error': return '오류';
-        case 'warning': return '경고';
-        default: return '정보';
-    }
+    return translate(`log.type.${type}`);
 }
 
 function startActivityLogUpdate() {
@@ -333,9 +410,9 @@ function startActivityLogUpdate() {
         // 실시간 시스템 활동 시뮬레이션
         if (Math.random() > 0.95) {
             const messages = [
-                '운영 Agent가 질문에 응답했습니다.',
-                '학습 Agent가 수업 내용을 요약했습니다.',
-                '출결 Agent가 출석 데이터를 업데이트했습니다.'
+                translate('log.agent.adminResponse'),
+                translate('log.agent.tutorSummary'),
+                translate('log.agent.attendanceUpdate')
             ];
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
             addActivityLog('AI Agent', randomMessage, 'info');
@@ -358,20 +435,20 @@ function startRealtimeSimulation() {
             // 카메라 상태 변경
             if (Math.random() > 0.5 && randomStudent.camera) {
                 randomStudent.camera = false;
-                addActivityLog('감시', `${randomStudent.name} 수강생의 카메라가 꺼졌습니다.`, 'warning');
+                addActivityLog('감시', translate('log.monitor.cameraOff', currentLanguage, { name: randomStudent.name }), 'warning');
             } else if (!randomStudent.camera && Math.random() > 0.7) {
                 randomStudent.camera = true;
-                addActivityLog('감시', `${randomStudent.name} 수강생의 카메라가 켜졌습니다.`, 'success');
+                addActivityLog('감시', translate('log.monitor.cameraOn', currentLanguage, { name: randomStudent.name }), 'success');
             }
             
             // 상태 변경
             if (randomStudent.status === 'online' && Math.random() > 0.8) {
                 randomStudent.status = 'away';
                 randomStudent.warnings += 1;
-                addActivityLog('감시', `${randomStudent.name} 수강생이 자리를 비웠습니다. (경고 발송)`, 'error');
+                addActivityLog('감시', translate('log.monitor.away', currentLanguage, { name: randomStudent.name }), 'error');
             } else if (randomStudent.status === 'away' && Math.random() > 0.6) {
                 randomStudent.status = 'online';
-                addActivityLog('감시', `${randomStudent.name} 수강생이 복귀했습니다.`, 'success');
+                addActivityLog('감시', translate('log.monitor.returned', currentLanguage, { name: randomStudent.name }), 'success');
             }
             
             renderStudentTable();
@@ -393,7 +470,7 @@ function stopRealtimeSimulation() {
 function sendAlert(studentId) {
     const student = students.find(s => s.id === studentId);
     if (student) {
-        addActivityLog('알림', `${student.name} 수강생에게 알림을 발송했습니다.`, 'info');
+        addActivityLog('알림', translate('log.student.alert', currentLanguage, { name: student.name }), 'info');
         alert(`📢 ${student.name} 수강생에게 알림이 발송되었습니다.`);
     }
 }
@@ -401,7 +478,7 @@ function sendAlert(studentId) {
 function makePhoneCall(studentId) {
     const student = students.find(s => s.id === studentId);
     if (student) {
-        addActivityLog('전화', `${student.name} 수강생(${student.phone})에게 전화를 발신했습니다.`, 'info');
+        addActivityLog('전화', translate('log.student.call', currentLanguage, { name: student.name, phone: student.phone }), 'info');
         
         // 실제 전화 걸기 시뮬레이션
         const confirmed = confirm(`📞 ${student.name} 수강생에게 전화를 거시겠습니까?\n\n연락처: ${student.phone}`);
@@ -417,7 +494,7 @@ function makePhoneCall(studentId) {
 function sendMessage(studentId) {
     const student = students.find(s => s.id === studentId);
     if (student) {
-        addActivityLog('메시지', `${student.name} 수강생(${student.phone})에게 메시지를 발송했습니다.`, 'info');
+        addActivityLog('메시지', translate('log.student.message', currentLanguage, { name: student.name, phone: student.phone }), 'info');
         
         // 메시지 내용 입력받기
         const message = prompt(`💬 ${student.name} 수강생에게 보낼 메시지를 입력하세요:`, '출석 상태를 확인해 주시기 바랍니다.');
@@ -435,7 +512,7 @@ function sendMessage(studentId) {
 // ============================
 
 function exportToExcel() {
-    addActivityLog('시스템', '출결 현황을 엑셀 파일로 다운로드합니다.', 'success');
+    addActivityLog('시스템', translate('log.attendance.downloaded'), 'success');
     
     // 현재 날짜와 시간
     const now = new Date();
@@ -850,12 +927,15 @@ function populateMonthSelector() {
     const selector = document.getElementById('attendanceMonth');
     const currentDate = new Date();
     
+    // 기존 옵션 제거
+    selector.innerHTML = '';
+    
     // 최근 6개월 옵션 생성
     for (let i = 0; i < 6; i++) {
         const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
         const option = document.createElement('option');
         option.value = `${date.getFullYear()}-${date.getMonth()}`;
-        option.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+        option.textContent = `${date.getFullYear()}${translate('attendance.year')} ${date.getMonth() + 1}${translate('attendance.month')}`;
         if (i === 0) option.selected = true;
         selector.appendChild(option);
     }
@@ -866,22 +946,23 @@ function renderMonthlyAttendance() {
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     
     let html = '<thead><tr>';
-    html += '<th class="student-name">수강생</th>';
+    html += `<th class="student-name">${translate('attendance.student')}</th>`;
     
     // 통계 컬럼 (왼쪽으로 이동)
-    html += '<th class="summary-col">총 수업일수</th>';
-    html += '<th class="summary-col">출석</th>';
-    html += '<th class="summary-col">결석</th>';
-    html += '<th class="summary-col">외출</th>';
-    html += '<th class="summary-col">조퇴</th>';
-    html += '<th class="summary-col">지각</th>';
-    html += '<th class="summary-col">출석률</th>';
-    html += '<th class="summary-col">시간률</th>';
+    html += `<th class="summary-col">${translate('attendance.totalDays')}</th>`;
+    html += `<th class="summary-col">${translate('attendance.present')}</th>`;
+    html += `<th class="summary-col">${translate('attendance.absent')}</th>`;
+    html += `<th class="summary-col">${translate('attendance.outing')}</th>`;
+    html += `<th class="summary-col">${translate('attendance.early')}</th>`;
+    html += `<th class="summary-col">${translate('attendance.late')}</th>`;
+    html += `<th class="summary-col">${translate('attendance.rate')}</th>`;
+    html += `<th class="summary-col">${translate('attendance.timeRate')}</th>`;
     
     // 날짜 헤더
+    const weekdayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(currentYear, currentMonth, day);
-        const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+        const dayOfWeek = translate(`attendance.weekday.${weekdayKeys[date.getDay()]}`);
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
         html += `<th class="${isWeekend ? 'weekend' : ''}">${day}<br><small>${dayOfWeek}</small></th>`;
     }
@@ -908,7 +989,8 @@ function renderMonthlyAttendance() {
         // 날짜별 출석 상태
         for (let day = 1; day <= daysInMonth; day++) {
             const dayData = data.days[day];
-            html += `<td><span class="attendance-status ${dayData.status}">${dayData.label}</span></td>`;
+            const statusLabel = translate(`attendance.status.${dayData.status}`);
+            html += `<td><span class="attendance-status ${dayData.status}">${statusLabel}</span></td>`;
         }
         
         html += '</tr>';
@@ -935,7 +1017,7 @@ function updateMonthlyStats() {
     
     document.getElementById('avgAttendanceRate').textContent = avgAttendanceRate + '%';
     document.getElementById('avgTimeRate').textContent = avgTimeRate + '%';
-    document.getElementById('totalClassDays').textContent = totalDays + '일';
+    document.getElementById('totalClassDays').textContent = totalDays + translate('attendance.days');
 }
 
 function changeAttendanceMonth() {
@@ -949,7 +1031,7 @@ function changeAttendanceMonth() {
     renderMonthlyAttendance();
     updateMonthlyStats();
     
-    addActivityLog('출석부', `${year}년 ${month + 1}월 출석부를 조회했습니다.`, 'info');
+    addActivityLog('출석부', translate('log.attendance.monthlyViewed', currentLanguage, { year: year, month: month + 1 }), 'info');
 }
 
 function exportMonthlyAttendance() {
@@ -959,44 +1041,55 @@ function exportMonthlyAttendance() {
     // 엑셀 데이터 준비
     const excelData = [];
     
-    // 헤더 행
-    const headerRow = { '수강생': '수강생' };
+    // 헤더 행 (웹 화면과 동일한 순서 + 번역)
+    const headerRow = {};
+    headerRow[translate('attendance.student')] = translate('attendance.student');
+    
+    // 통계 컬럼 먼저 (웹 화면과 동일)
+    headerRow[translate('attendance.totalDays')] = translate('attendance.totalDays');
+    headerRow[translate('attendance.present')] = translate('attendance.present');
+    headerRow[translate('attendance.absent')] = translate('attendance.absent');
+    headerRow[translate('attendance.outing')] = translate('attendance.outing');
+    headerRow[translate('attendance.early')] = translate('attendance.early');
+    headerRow[translate('attendance.late')] = translate('attendance.late');
+    headerRow[translate('attendance.rate')] = translate('attendance.rate');
+    headerRow[translate('attendance.timeRate')] = translate('attendance.timeRate');
+    
+    // 날짜 컬럼 (통계 다음에)
+    const weekdayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(currentYear, currentMonth, day);
-        const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-        headerRow[`${day}일(${dayOfWeek})`] = '';
+        const dayOfWeek = translate(`attendance.weekday.${weekdayKeys[date.getDay()]}`);
+        headerRow[`${day}${translate('attendance.days').replace(' ', '')}(${dayOfWeek})`] = '';
     }
-    headerRow['총 수업일수'] = '총 수업일수';
-    headerRow['출석'] = '출석';
-    headerRow['결석'] = '결석';
-    headerRow['외출'] = '외출';
-    headerRow['조퇴'] = '조퇴';
-    headerRow['지각'] = '지각';
-    headerRow['출석률'] = '출석률';
-    headerRow['시간률'] = '시간률';
+    
     excelData.push(headerRow);
     
     // 수강생별 데이터
     students.forEach(student => {
         const data = monthlyAttendanceData[student.id];
-        const row = { '수강생': student.name };
+        const row = {};
+        row[translate('attendance.student')] = student.name;
         
+        // 통계 먼저 (웹 화면과 동일)
+        const summary = data.summary;
+        row[translate('attendance.totalDays')] = summary.totalDays;
+        row[translate('attendance.present')] = summary.present;
+        row[translate('attendance.absent')] = summary.absent;
+        row[translate('attendance.outing')] = summary.outing;
+        row[translate('attendance.early')] = summary.early;
+        row[translate('attendance.late')] = summary.late;
+        row[translate('attendance.rate')] = summary.attendanceRate + '%';
+        row[translate('attendance.timeRate')] = summary.timeRate + '%';
+        
+        // 날짜별 출석 상태 (통계 다음에)
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(currentYear, currentMonth, day);
-            const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+            const dayOfWeek = translate(`attendance.weekday.${weekdayKeys[date.getDay()]}`);
             const dayData = data.days[day];
-            row[`${day}일(${dayOfWeek})`] = dayData.label;
+            const statusLabel = translate(`attendance.status.${dayData.status}`);
+            row[`${day}${translate('attendance.days').replace(' ', '')}(${dayOfWeek})`] = statusLabel;
         }
-        
-        const summary = data.summary;
-        row['총 수업일수'] = summary.totalDays;
-        row['출석'] = summary.present;
-        row['결석'] = summary.absent;
-        row['외출'] = summary.outing;
-        row['조퇴'] = summary.early;
-        row['지각'] = summary.late;
-        row['출석률'] = summary.attendanceRate + '%';
-        row['시간률'] = summary.timeRate + '%';
         
         excelData.push(row);
     });
@@ -1011,42 +1104,55 @@ function exportMonthlyAttendance() {
     });
     
     excelData.push({});
-    excelData.push({
-        '수강생': '=== 평균 통계 ===',
-        '출석률': Math.round(totalAttendanceRate / students.length) + '%',
-        '시간률': Math.round(totalTimeRate / students.length) + '%'
-    });
+    const avgRow = {};
+    avgRow[translate('attendance.student')] = '=== ' + translate('attendance.avgRate') + ' ===';
+    avgRow[translate('attendance.rate')] = Math.round(totalAttendanceRate / students.length) + '%';
+    avgRow[translate('attendance.timeRate')] = Math.round(totalTimeRate / students.length) + '%';
+    excelData.push(avgRow);
     
     excelData.push({});
-    excelData.push({
-        '수강생': '출력 일시',
-        '출석': new Date().toLocaleString('ko-KR')
-    });
-    excelData.push({
-        '수강생': '시스템',
-        '출석': '강한 매니저 v1.0.0'
-    });
+    const timeRow = {};
+    timeRow[translate('attendance.student')] = translate('footer.version');
+    timeRow[translate('attendance.totalDays')] = new Date().toLocaleString(currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'ja' ? 'ja-JP' : currentLanguage === 'zh' ? 'zh-CN' : currentLanguage === 'ar' ? 'ar-SA' : 'en-US');
+    excelData.push(timeRow);
+    
+    const sysRow = {};
+    sysRow[translate('attendance.student')] = translate('header.title');
+    sysRow[translate('attendance.totalDays')] = 'v1.1.0';
+    excelData.push(sysRow);
     
     // 워크시트 생성
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     
     // 컬럼 너비 설정
-    const wscols = [{ wch: 12 }]; // 수강생 이름
+    const wscols = [
+        { wch: 12 },  // 수강생 이름
+        { wch: 10 },  // 총 수업일수
+        { wch: 8 },   // 출석
+        { wch: 8 },   // 결석
+        { wch: 8 },   // 외출
+        { wch: 8 },   // 조퇴
+        { wch: 8 },   // 지각
+        { wch: 10 },  // 출석률
+        { wch: 10 }   // 시간률
+    ];
+    
+    // 날짜 컬럼 너비 추가
     for (let i = 0; i < daysInMonth; i++) {
         wscols.push({ wch: 8 });
     }
-    wscols.push({ wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 });
+    
     worksheet['!cols'] = wscols;
     
     // 워크북 생성
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, `${currentMonth + 1}월 출석부`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, `${currentMonth + 1}${translate('attendance.days').replace(' ', '')}${translate('attendance.title').replace('월별 ', '')}`);
     
     // 파일 다운로드
-    const filename = `월별출석부_${currentYear}년${currentMonth + 1}월_${new Date().toLocaleDateString('ko-KR').replace(/\. /g, '-').replace('.', '')}.xlsx`;
+    const filename = `${translate('attendance.title')}_${currentYear}${translate('attendance.days').replace(' ', '')}${currentMonth + 1}${translate('attendance.days').replace(' ', '')}_${new Date().toLocaleDateString('ko-KR').replace(/\. /g, '-').replace('.', '')}.xlsx`;
     XLSX.writeFile(workbook, filename);
     
-    addActivityLog('출석부', `${monthString} 출석부를 다운로드했습니다.`, 'success');
+    addActivityLog('출석부', translate('log.attendance.monthlyDownloaded', currentLanguage, { month: monthString }), 'success');
     alert(`✅ ${monthString} 출석부가 다운로드되었습니다.\n\n파일명: ${filename}`);
 }
 
@@ -1057,6 +1163,25 @@ function exportMonthlyAttendance() {
 function setupEventListeners() {
     // 테마 전환 버튼
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    
+    // 언어 전환 버튼
+    document.getElementById('languageToggle').addEventListener('click', toggleLanguageDropdown);
+    
+    // 언어 옵션 클릭
+    document.querySelectorAll('.language-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang');
+            selectLanguage(lang);
+        });
+    });
+    
+    // 언어 드롭다운 외부 클릭 시 닫기
+    document.addEventListener('click', function(e) {
+        const languageContainer = document.querySelector('.language-selector-container');
+        if (!languageContainer.contains(e.target)) {
+            document.getElementById('languageDropdown').classList.remove('show');
+        }
+    });
     
     // 감독 제어 버튼
     document.getElementById('startMonitoring').addEventListener('click', startMonitoring);
@@ -1081,13 +1206,13 @@ function setupEventListeners() {
 
 function initializeMeetingScheduler() {
     renderScheduledMeetings();
-    addActivityLog('Teams', 'Teams에서 예약된 수업 일정을 불러왔습니다.', 'info');
+    addActivityLog('Teams', translate('log.teams.loaded'), 'info');
 }
 
 function refreshMeetings() {
     // 실제 환경에서는 Microsoft Teams SDK로 데이터를 다시 가져옴
     renderScheduledMeetings();
-    addActivityLog('Teams', 'Teams 수업 일정을 새로고침했습니다.', 'info');
+    addActivityLog('Teams', translate('log.teams.refreshed'), 'info');
     
     // 시뮬레이션: 새로운 수업이 추가되었다고 가정
     const newMeetingAdded = Math.random() > 0.7; // 30% 확률로 새 수업 추가
@@ -1116,7 +1241,7 @@ function refreshMeetings() {
         });
         
         renderScheduledMeetings();
-        addActivityLog('Teams', `'${randomTitle}(${newMeeting.startTime} ~ ${newMeeting.endTime})' 모임이 성공적으로 예약되었습니다.`, 'success');
+        addActivityLog('Teams', translate('log.teams.scheduled', currentLanguage, { title: randomTitle, time: `${newMeeting.startTime} ~ ${newMeeting.endTime}` }), 'success');
     }
     
     alert('✅ Teams 수업 일정을 새로고침했습니다.');
@@ -1129,8 +1254,8 @@ function renderScheduledMeetings() {
         container.innerHTML = `
             <div class="no-meetings-log">
                 <i class="fas fa-calendar-times"></i>
-                <p>예약된 수업이 없습니다.</p>
-                <small>Teams에서 Power Automate로 수업을 예약하면 자동으로 표시됩니다.</small>
+                <p>${translate('meeting.none')}</p>
+                <small>${translate('meeting.none.detail')}</small>
             </div>
         `;
         return;
@@ -1142,13 +1267,40 @@ function renderScheduledMeetings() {
         const logEntry = document.createElement('div');
         logEntry.className = 'meeting-log-entry';
         
-        // 날짜 포맷팅
+        // 날짜 포맷팅 (언어별)
         const dateObj = new Date(meeting.date);
-        const year = dateObj.getFullYear();
-        const month = dateObj.getMonth() + 1;
-        const day = dateObj.getDate();
-        const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-        const weekday = weekdays[dateObj.getDay()];
+        let logMessage = '';
+        
+        if (currentLanguage === 'ko') {
+            const year = dateObj.getFullYear();
+            const month = dateObj.getMonth() + 1;
+            const day = dateObj.getDate();
+            const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+            const weekday = weekdays[dateObj.getDay()];
+            logMessage = `${year}년 ${month}월 ${day}일 ${weekday} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" 수업 모임 예약되었습니다.`;
+        } else if (currentLanguage === 'ja') {
+            const year = dateObj.getFullYear();
+            const month = dateObj.getMonth() + 1;
+            const day = dateObj.getDate();
+            const weekdays = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
+            const weekday = weekdays[dateObj.getDay()];
+            logMessage = `${year}年${month}月${day}日 ${weekday} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" 授業ミーティングが予約されました。`;
+        } else if (currentLanguage === 'zh') {
+            const year = dateObj.getFullYear();
+            const month = dateObj.getMonth() + 1;
+            const day = dateObj.getDate();
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekday = weekdays[dateObj.getDay()];
+            logMessage = `${year}年${month}月${day}日 ${weekday} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" 课程会议已预约。`;
+        } else if (currentLanguage === 'ar') {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = dateObj.toLocaleDateString('ar-SA', options);
+            logMessage = `${dateString} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" تم حجز اجتماع الفصل.`;
+        } else { // English
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = dateObj.toLocaleDateString('en-US', options);
+            logMessage = `${dateString} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" class meeting has been scheduled.`;
+        }
         
         // 오늘/내일/지난 날짜 판단
         const today = new Date();
@@ -1168,9 +1320,6 @@ function renderScheduledMeetings() {
         }
         
         logEntry.className += ' ' + logClass;
-        
-        // 로그 메시지 생성
-        const logMessage = `${year}년 ${month}월 ${day}일 ${weekday} ${meeting.startTime} ~ ${meeting.endTime}, "${meeting.title}" 수업 모임 예약되었습니다.`;
         
         logEntry.innerHTML = `
             <div class="meeting-log-icon">
