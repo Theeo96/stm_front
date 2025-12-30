@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
     BASE_URL: '/api', // Azure Static Web App defaults to /api for managed functions
-    MOCK_MODE: true   // Set to false when backend is ready
+    MOCK_MODE: false   // Set to false when backend is ready
 };
 
 // Mock Data (matches the approved JSON structure)
