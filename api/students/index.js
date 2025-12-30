@@ -53,13 +53,21 @@ module.exports = async function (context, req) {
         context.log(`Updated ${incomingData.length} students. Cache size: ${studentsCache.length}`);
 
         // DELETE request: Clear the data
-        if (req.method === "DELETE") {
-            studentsCache.length = 0; // Clear the array
-            context.log("Students cache cleared.");
-            context.res = {
-                status: 200,
-                body: { message: "Data cleared successfully" }
-            };
-            return;
-        }
-    };
+        context.res = {
+            status: 200,
+            body: { message: "Data updated successfully", currentCount: studentsCache.length }
+        };
+        return;
+    }
+
+    // DELETE request: Clear the data
+    if (req.method === "DELETE") {
+        studentsCache.length = 0; // Clear the array
+        context.log("Students cache cleared.");
+        context.res = {
+            status: 200,
+            body: { message: "Data cleared successfully" }
+        };
+        return;
+    }
+};
