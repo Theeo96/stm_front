@@ -65,7 +65,7 @@ function pauseMonitoring() {
 
     addActivityLog('시스템', window.translate('log.system.pause'), 'warning');
 
-    window.dispatchEvent(new CustomEvent('monitoringStopped')); // 일시정지도 멈춤으로 취급
+    window.dispatchEvent(new CustomEvent('monitoringPaused')); // 일시정지 이벤트 분리
 }
 
 // 긴급 공지
