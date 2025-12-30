@@ -6,7 +6,8 @@ import { addActivityLog } from './logging.js';
 // ============================
 
 export function init() {
-    // 초기에는 특별히 할 것 없음
+    const exportBtn = document.getElementById('exportExcel');
+    if (exportBtn) exportBtn.addEventListener('click', exportToExcel);
 }
 
 export function render() {
@@ -160,4 +161,41 @@ export function updateStatistics() {
     if (presentEl) presentEl.textContent = present;
     if (absentEl) absentEl.textContent = absent;
     if (warningEl) warningEl.textContent = warnings;
+}
+
+function exportToExcel() {
+    if (!state.students || state.students.length === 0) {
+        alert(window.translate ? window.translate('noData') : "데이터가 없습니다.");
+        return;
+    }
+
+    const data = state.students.map(s => ({
+        "번호": s.num || s.id,
+        "이름": s.name,
+        "연락처": s.phone || '-',
+        "상태": s.status === 'online' ? '출석' : (s.status === 'away' ? '자리비움' : '결석'),
+        "참가여부": s.isIn ? '참여' : '미참여',
+        "카메라": s.camera ? 'ON' : 'OFF',
+        "마지막 확인": s.lastSeenText,
+        "경고": s.warnings
+    }));
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(data);
+
+    // Auto-width (Optional, but nice)
+    const wscols = [
+        { wch: 10 }, // 번호
+        { wch: 10 }, // 이름
+        { wch: 15 }, // 연락처
+        { wch: 10 }, // 상태
+        { wch: 10 }, // 참가여부
+        { wch: 8 },  // 카메라
+        { wch: 15 }, // 마지막 확인
+        { wch: 6 }   // 경고
+    ];
+    ws['!cols'] = wscols;
+
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+    XLSX.writeFile(wb, "Student_Status.xlsx");
 }

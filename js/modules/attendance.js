@@ -1,4 +1,5 @@
 import { state, setMonthlyAttendanceData } from '../store.js';
+import { STUDENT_INFO } from '../data/student_info.js';
 
 // ============================
 // 월별 출석부 관리
@@ -6,7 +7,11 @@ import { state, setMonthlyAttendanceData } from '../store.js';
 
 export function init() {
     populateMonthSelector();
-    render();
+
+    // 초기화 시 현재 날짜로 데이터 생성
+    const now = new Date();
+    updateDate(now.getFullYear(), now.getMonth());
+
     setupEventListeners();
 }
 
@@ -26,6 +31,9 @@ function setupEventListeners() {
             updateDate(year, month - 1);
         });
     }
+
+    const exportBtn = document.getElementById('exportMonthlyAttendance');
+    if (exportBtn) exportBtn.addEventListener('click', exportToExcel);
 }
 
 
@@ -199,19 +207,30 @@ function updateMonthlyStats() {
 }
 
 
+function exportToExcel() {
+    const table = document.getElementById('monthlyAttendanceTable');
+    if (!table) {
+        alert("데이터가 없습니다.");
+        return;
+    }
+    // sheetjs 라이브러리 활용
+    const wb = XLSX.utils.table_to_sheet(table);
+    const new_wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(new_wb, wb, "Monthly Attendance");
+    XLSX.writeFile(new_wb, `Monthly_Attendance_${state.currentYear}_${state.currentMonth + 1}.xlsx`);
+}
+
 // ============================
-// 월별 출석 데이터 생성 (Helper)
+// 월별 출석 데이터 생성 (Helper - Dummy Data)
 // ============================
 export function generateMonthlyAttendanceData(year, month) {
-    // state.students 데이터를 기반으로 생성해야 함.
-    // 만약 students가 로드되기 전이라면 빈 객체 반환
-    if (!state.students || state.students.length === 0) return {};
-
+    // STUDENT_INFO(정적 데이터)를 기반으로 더미 데이터 생성
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const monthlyData = {};
 
-    state.students.forEach(student => {
-        monthlyData[student.id] = {
+    STUDENT_INFO.forEach(student => {
+        // student.num을 키로 사용
+        monthlyData[student.num] = {
             name: student.name,
             days: {},
             summary: {
@@ -231,25 +250,25 @@ export function generateMonthlyAttendanceData(year, month) {
             const dayOfWeek = date.getDay();
 
             if (dayOfWeek === 0 || dayOfWeek === 6) {
-                monthlyData[student.id].days[day] = { status: 'weekend', hours: 0 };
+                monthlyData[student.num].days[day] = { status: 'weekend', hours: 0 };
                 continue;
             }
 
-            monthlyData[student.id].summary.totalDays++;
+            monthlyData[student.num].summary.totalDays++;
 
             const rand = Math.random();
             let status, hours;
 
-            if (rand < 0.85) { status = 'present'; hours = 8; monthlyData[student.id].summary.present++; }
-            else if (rand < 0.90) { status = 'late'; hours = 7; monthlyData[student.id].summary.late++; }
-            else if (rand < 0.93) { status = 'early'; hours = 6; monthlyData[student.id].summary.early++; }
-            else if (rand < 0.96) { status = 'outing'; hours = 4; monthlyData[student.id].summary.outing++; }
-            else { status = 'absent'; hours = 0; monthlyData[student.id].summary.absent++; }
+            if (rand < 0.85) { status = 'present'; hours = 8; monthlyData[student.num].summary.present++; }
+            else if (rand < 0.90) { status = 'late'; hours = 7; monthlyData[student.num].summary.late++; }
+            else if (rand < 0.93) { status = 'early'; hours = 6; monthlyData[student.num].summary.early++; }
+            else if (rand < 0.96) { status = 'outing'; hours = 4; monthlyData[student.num].summary.outing++; }
+            else { status = 'absent'; hours = 0; monthlyData[student.num].summary.absent++; }
 
-            monthlyData[student.id].days[day] = { status, hours };
+            monthlyData[student.num].days[day] = { status, hours };
         }
 
-        const summary = monthlyData[student.id].summary;
+        const summary = monthlyData[student.num].summary;
         const totalDays = summary.totalDays;
 
         if (totalDays > 0) {
