@@ -136,30 +136,21 @@
             const confirmed = confirm(`📞 ${student.name} 수강생에게 전화를 거시겠습니까?\n\n연락처: ${student.phone}`);
             if (confirmed) {
                 alert(`📞 ${student.name} 수강생(${student.phone})에게 전화 연결 중...`);
-                incrementWarning(student.id);
-                if (window.Logging && window.Logging.addLog) {
-                    window.Logging.addLog('전화', `${student.name} 수강생에게 전화 연결 시도`, 'info');
-                }
+                incrementWarning(student.id, 'call');
             }
         } else if (type === 'message') {
             const msg = prompt(`💬 ${student.name} 수강생에게 보낼 메시지를 입력하세요:`, '출석 상태를 확인해 주시기 바랍니다.');
             if (msg && msg.trim() !== '') {
                 alert(`💬 ${student.name} 수강생(${student.phone})에게 메시지가 발송되었습니다.\n\n내용: ${msg}`);
-                incrementWarning(student.id);
-                if (window.Logging && window.Logging.addLog) {
-                    window.Logging.addLog('메시지', `${student.name}에게 메시지 발송: ${msg}`, 'info');
-                }
+                incrementWarning(student.id, 'message');
             }
         } else if (type === 'alert') {
             alert(`📢 ${student.name} 수강생에게 알림이 발송되었습니다.`);
-            incrementWarning(student.id);
-            if (window.Logging && window.Logging.addLog) {
-                window.Logging.addLog('알림', `${student.name}에게 경고 알림 발송`, 'warning');
-            }
+            incrementWarning(student.id, 'alert');
         }
     }
 
-    function incrementWarning(studentId) {
+    function incrementWarning(studentId, type) {
         const students = window.Store.state.students || [];
         const idx = students.findIndex(s => s.id === studentId);
         if (idx !== -1) {
@@ -167,6 +158,23 @@
             const current = typeof students[idx].warnings === 'number' ? students[idx].warnings : 0;
             students[idx].warnings = current + 1;
             window.Store.setStudents([...students]); // Trigger Global State Update & Re-render
+
+            // Log activity (Legacy Format)
+            const student = students[idx];
+            let message = '';
+
+            if (type === 'call') {
+                message = `[전화] ${student.name} 수강생(${student.phone})에게 전화를 발신했습니다.`;
+            } else if (type === 'message') {
+                message = `[메시지] ${student.name} 수강생(${student.phone})에게 메시지를 발송했습니다.`;
+            } else if (type === 'alert') {
+                message = `[알림] ${student.name} 수강생에게 알림을 발송했습니다.`;
+            }
+
+            if (message && window.Logging && window.Logging.addActivityLog) {
+                // type='시스템' (Source), message, logType='info'
+                window.Logging.addActivityLog('시스템', message, 'info');
+            }
         }
     }
 

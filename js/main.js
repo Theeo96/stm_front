@@ -72,18 +72,29 @@ async function fetchAndUpdateData() {
             return;
         }
 
-        // Students
-        const newStudentData = await window.apiService.fetchStudents();
+        // Student Data - ONLY fetch/update when monitoring is active
+        if (window.Store.state.isMonitoring) {
+            const newStudentData = await window.apiService.fetchStudents();
 
-        // Check if data is valid (array)
-        if (Array.isArray(newStudentData)) {
-            // Current State (from store)
-            const currentStudents = window.Store.state.students;
+            // User requested: Full overwrite with new JSON, but we must preserve local state (warnings).
+            // Logic: Take new list, map warnings from old list if exists.
+            const currentStudents = window.Store.state.students || [];
 
-            // Merge logic
-            const mergedStudents = window.apiService.mergeStudentData(currentStudents, newStudentData);
+            const processedStudents = newStudentData.map(newStudent => {
+                const existing = currentStudents.find(c => c.id === newStudent.id || c.name === newStudent.name);
+                // Preserve warnings, otherwise take new data's warning (or 0)
+                const preservedWarnings = (existing && existing.warnings !== undefined) ? existing.warnings : (newStudent.warnings || 0);
 
-            window.Store.setStudents(mergedStudents);
+                // Process static info/status/lastSeen using apiService helpers if needed, 
+                // but if fetchStudents already processed it (it does calls _processStudentData), we just need to merge warnings.
+                // fetchStudents returns processed data (with derived status etc).
+                return {
+                    ...newStudent,
+                    warnings: preservedWarnings
+                };
+            });
+
+            window.Store.setStudents(processedStudents);
 
             if (window.Students) {
                 window.Students.render();
