@@ -109,4 +109,9 @@ function stopLiveMonitoring() {
     setStudents([]);
     Students.render();
     Students.updateStatistics();
+
+    // Backend Clear
+    apiService.clearStudents().then(success => {
+        if (success) console.log('Backend data cleared');
+    });
 }

@@ -99,34 +99,60 @@ export const apiService = {
         });
     },
 
-    // Process student data for UI
+    async clearStudents() {
+        if (API_CONFIG.MOCK_MODE) {
+            console.log('Mock Data Cleared');
+            return true;
+        }
+
+        try {
+            const response = await fetch(`${API_CONFIG.BASE_URL}/students`, {
+                method: 'DELETE'
+            });
+            return response.ok;
+        } catch (error) {
+            console.error('Failed to clear students:', error);
+            return false;
+        }
+    },
+
+    // ----------------------------
+    // API Helper Methods
+    // ----------------------------
+
     _processStudentData(students) {
         return students.map(student => {
+            let lastSeenDate;
+
+            // Face Detected = Sync last_seen to Now
+            if (student.face_detected) {
+                lastSeenDate = new Date();
+                student.last_seen = lastSeenDate.toISOString();
+            } else {
+                lastSeenDate = new Date(student.last_seen || Date.now());
+            }
+
             const now = new Date();
-            const lastSeen = new Date(student.last_seen);
-            const diffMs = now - lastSeen;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMins / 60);
-            const diffDays = Math.floor(diffHours / 24);
+            const diffMs = now - lastSeenDate;
+            const diffSeconds = Math.floor(diffMs / 1000);
 
-            let lastSeenKey = 'justnow';
-            let lastSeenValue = 0;
+            let lastSeenText = '';
 
-            if (diffDays > 0) {
-                lastSeenKey = 'days';
-                lastSeenValue = diffDays;
-            } else if (diffHours > 0) {
-                lastSeenKey = 'hours';
-                lastSeenValue = diffHours;
-            } else if (diffMins > 0) {
-                lastSeenKey = 'minutes';
-                lastSeenValue = diffMins;
+            if (student.face_detected || diffSeconds < 5) {
+                lastSeenText = '지금';
+            } else {
+                const mins = Math.floor(diffSeconds / 60);
+                const secs = diffSeconds % 60;
+                if (mins > 0) {
+                    lastSeenText = `${mins}분 ${secs}초 전`;
+                } else {
+                    lastSeenText = `${secs}초 전`;
+                }
             }
 
             return {
                 ...student,
-                lastSeenKey,
-                lastSeenValue
+                lastSeenText // Direct formatted string
             };
         });
     },
