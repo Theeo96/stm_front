@@ -142,54 +142,54 @@
                     <div class="agent-card" data-agent="admin">
                         <div class="agent-header">
                             <i class="fas fa-user-cog"></i>
-                            <h3>운영 Agent</h3>
+                            <h3 data-i18n="agent.admin">운영 Agent</h3>
                             <button class="agent-settings-btn" onclick="openAgentSettings('admin')" title="설정">
                                 <i class="fas fa-cog"></i>
                             </button>
                         </div>
                         <div class="agent-status active">
-                            <i class="fas fa-circle"></i> 활성
+                            <i class="fas fa-circle"></i> <span data-i18n="agent.status.active">활성</span>
                         </div>
-                        <p class="agent-description">교육 Q&A, 공지사항, 일정 관리</p>
+                        <p class="agent-description" data-i18n="agent.desc.admin">교육 Q&A, 공지사항, 일정 관리</p>
                     </div>
                     <div class="agent-card" data-agent="tutor">
                         <div class="agent-header">
                             <i class="fas fa-graduation-cap"></i>
-                            <h3>학습 Agent</h3>
+                            <h3 data-i18n="agent.tutor">학습 Agent</h3>
                             <button class="agent-settings-btn" onclick="openAgentSettings('tutor')" title="설정">
                                 <i class="fas fa-cog"></i>
                             </button>
                         </div>
                         <div class="agent-status active">
-                            <i class="fas fa-circle"></i> 활성
+                            <i class="fas fa-circle"></i> <span data-i18n="agent.status.active">활성</span>
                         </div>
-                        <p class="agent-description">수업 질의응답, 내용 요약</p>
+                        <p class="agent-description" data-i18n="agent.desc.tutor">수업 질의응답, 내용 요약</p>
                     </div>
                     <div class="agent-card" data-agent="monitor">
                         <div class="agent-header">
                             <i class="fas fa-video"></i>
-                            <h3>감시 Agent</h3>
+                            <h3 data-i18n="agent.monitor">감시 Agent</h3>
                             <button class="agent-settings-btn" onclick="openAgentSettings('monitor')" title="설정">
                                 <i class="fas fa-cog"></i>
                             </button>
                         </div>
                         <div class="agent-status standby">
-                            <i class="fas fa-circle"></i> 대기중
+                            <i class="fas fa-circle"></i> <span data-i18n="agent.status.standby">대기중</span>
                         </div>
-                        <p class="agent-description">카메라 화면 감시, 경고 발송</p>
+                        <p class="agent-description" data-i18n="agent.desc.monitor">카메라 화면 감시, 경고 발송</p>
                     </div>
                     <div class="agent-card" data-agent="attendance">
                         <div class="agent-header">
                             <i class="fas fa-clipboard-check"></i>
-                            <h3>출결 Agent</h3>
+                            <h3 data-i18n="agent.attendance">출결 Agent</h3>
                             <button class="agent-settings-btn" onclick="openAgentSettings('attendance')" title="설정">
                                 <i class="fas fa-cog"></i>
                             </button>
                         </div>
                         <div class="agent-status active">
-                            <i class="fas fa-circle"></i> 활성
+                            <i class="fas fa-circle"></i> <span data-i18n="agent.status.active">활성</span>
                         </div>
-                        <p class="agent-description">출결 체크 및 정정 요청 관리</p>
+                        <p class="agent-description" data-i18n="agent.desc.attendance">출결 체크 및 정정 요청 관리</p>
                     </div>
                 </div>
             </section>
@@ -233,6 +233,7 @@
                                 <th data-i18n="student.number">번호</th>
                                 <th data-i18n="student.name">이름</th>
                                 <th data-i18n="student.phone">연락처</th>
+                                <th data-i18n="student.isIn">참가여부</th>
                                 <th data-i18n="student.status">상태</th>
                                 <th data-i18n="student.camera">카메라</th>
                                 <th data-i18n="student.lastSeen">마지막 확인</th>
@@ -251,11 +252,7 @@
             <section class="activity-log-section">
                 <h2><i class="fas fa-history"></i> <span data-i18n="log.title">활동 로그</span></h2>
                 <div class="log-container" id="activityLog">
-                    <div class="log-entry">
-                        <span class="log-time">14:32:15</span>
-                        <span class="log-type info">시스템</span>
-                        <span class="log-message">강한 매니저 시스템이 초기화되었습니다.</span>
-                    </div>
+                    <!-- JavaScript로 동적 생성 -->
                 </div>
             </section>
 
