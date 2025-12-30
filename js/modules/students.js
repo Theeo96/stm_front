@@ -24,26 +24,34 @@
         students.forEach((student, index) => {
             const row = document.createElement('tr');
 
-            // Status Badge Logic
-            let statusBadgeClass = 'status-offline';
-            let statusText = '미참여';
+            // Status Badge Logic (Legacy: online=출석, away=자리비움, offline=결석)
+            let statusBadgeClass = 'status-badge-table offline';
+            let statusText = '결석';
+            let statusIcon = 'fa-circle';
 
             if (student.status === 'online') {
-                statusBadgeClass = 'status-online';
-                statusText = '참여중';
+                statusBadgeClass = 'status-badge-table online';
+                statusText = '출석';
+                statusIcon = 'fa-circle';
             } else if (student.status === 'away') {
-                statusBadgeClass = 'status-warning';
+                statusBadgeClass = 'status-badge-table away';
                 statusText = '자리비움';
+                statusIcon = 'fa-clock';
             }
 
-            // Face Detection & Camera Logic
+            // Face Detection Logic (Now independent for column display, though logically linked)
             let faceStatusStyle = '';
             let faceIcon = '';
-            let cameraText = 'OFF';
+
+            // Logic: If camera is OFF, can face be detected? Usually no.
+            // But user wants separate column. 
+            // If camera ON and face_detected !== false -> Smile (Green)
+            // If camera ON and face_detected === false -> Frown (Red)
+            // If camera OFF -> slash-slash (Gray) or just empty?
+            // Legacy/User request implies showing face status.
 
             if (student.camera) {
-                cameraText = 'ON';
-                if (student.face_detected !== false) { // Default to true if undefined
+                if (student.face_detected !== false) {
                     faceStatusStyle = 'color: #10B981; font-size: 1.2rem;'; // Green
                     faceIcon = '<i class="fas fa-smile"></i>';
                 } else {
@@ -51,27 +59,47 @@
                     faceIcon = '<i class="fas fa-frown"></i>';
                 }
             } else {
+                // If camera is off, face detection is theoretically impossible or "off"
                 faceStatusStyle = 'color: #9CA3AF; font-size: 1.2rem;'; // Gray
-                faceIcon = '<i class="fas fa-video-slash"></i>';
+                faceIcon = '<i class="fas fa-minus-circle"></i>'; // Explicit "No Data" or similar
+            }
+            // Face Detection & Camera Logic (Original cameraText logic, kept separate for clarity)
+            let cameraText = 'OFF';
+
+            if (student.camera) {
+                cameraText = 'ON';
             }
 
             // Warnings - start at 0 if undefined
             const warnings = student.warnings !== undefined ? student.warnings : 0;
             const warningsHtml = `<span class="warning-badge ${warnings > 0 ? 'warning-active' : ''}">${warnings}</span>`;
 
-            // isIn text
-            const isInText = student.isIn ?
-                `<span class="presence-badge in"><i class="fas fa-check"></i> 참여</span>` :
-                `<span class="presence-badge out"><i class="fas fa-times"></i> 미참여</span>`;
+            // isIn text (Meeting Attendance) - styled like status badges
+            const isInBadgeClass = student.isIn ? 'status-badge-table present' : 'status-badge-table absent';
+            const isInIcon = student.isIn ? 'fa-check-circle' : 'fa-times-circle'; // Or generic circle
+            const isInText = student.isIn ? '참여' : '미참여';
+            const isInHtml = `
+                <span class="${isInBadgeClass}">
+                    <i class="fas ${isInIcon}"></i> ${isInText}
+                </span>`;
 
             row.innerHTML = `
                 <td>${index + 1}</td>
                 <td><div class="student-name">${student.name}</div></td>
                 <td>${student.phone || '-'}</td>
-                <td>${isInText}</td>
-                <td><span class="status-badge ${statusBadgeClass}">${statusText}</span></td>
+                <td>${isInHtml}</td>
                 <td>
-                     <span style="${faceStatusStyle}" title="${student.camera ? (student.face_detected !== false ? '얼굴 인식됨' : '얼굴 미인식') : '카메라 꺼짐'}">
+                    <span class="${statusBadgeClass}">
+                        <i class="fas ${statusIcon}"></i> ${statusText}
+                    </span>
+                </td>
+                <td>
+                     <span class="camera-status ${student.camera ? 'on' : 'off'}" title="${student.camera ? '카메라 켜짐' : '카메라 꺼짐'}">
+                        <i class="fas ${student.camera ? 'fa-video' : 'fa-video-slash'}"></i> ${cameraText}
+                    </span>
+                </td>
+                <td>
+                    <span style="${faceStatusStyle}" title="${student.face_detected !== false ? '얼굴 인식됨' : '얼굴 미인식'}">
                         ${faceIcon}
                     </span>
                 </td>
@@ -79,9 +107,9 @@
                 <td>${warningsHtml}</td>
                 <td>
                     <div class="action-buttons">
-                        <button class="action-btn btn-call" title="전화" data-id="${student.id}" data-type="call"><i class="fas fa-phone"></i></button>
-                        <button class="action-btn btn-message" title="메시지" data-id="${student.id}" data-type="message"><i class="fas fa-comment"></i></button>
-                        <button class="action-btn btn-alert" title="경고" data-id="${student.id}" data-type="alert"><i class="fas fa-exclamation-triangle"></i></button>
+                        <button class="action-btn phone-btn" title="전화" data-id="${student.id}" data-type="call"><i class="fas fa-phone"></i></button>
+                        <button class="action-btn message-btn" title="메시지" data-id="${student.id}" data-type="message"><i class="fas fa-comment"></i></button>
+                        <button class="action-btn alert-btn-table" title="경고" data-id="${student.id}" data-type="alert"><i class="fas fa-bell"></i></button>
                     </div>
                 </td>
             `;
@@ -205,7 +233,7 @@
         // 통계 정보 추가
         const statistics = [
             {},
-            { '번호': '=== 출결 통계 ===' },
+            { '번호': '--- 출결 통계 ---' },
             { '번호': '총 수강생', '이름': students.length + '명' },
             { '번호': '출석', '이름': students.filter(s => s.status === 'online').length + '명' },
             { '번호': '결석', '이름': students.filter(s => s.status === 'offline').length + '명' },

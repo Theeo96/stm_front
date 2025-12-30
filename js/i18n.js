@@ -55,6 +55,7 @@ const translations = {
         'student.isIn.false': '미참여',
         'student.status': '상태',
         'student.camera': '카메라',
+        'student.face': '얼굴 감지',
         'student.lastSeen': '마지막 확인',
         'student.warnings': '경고',
         'student.actions': '작업',
