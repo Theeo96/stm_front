@@ -173,8 +173,8 @@
                                 <i class="fas fa-cog"></i>
                             </button>
                         </div>
-                        <div class="agent-status standby">
-                            <i class="fas fa-circle"></i> <span data-i18n="agent.status.standby">대기중</span>
+                        <div class="agent-status inactive">
+                            <i class="fas fa-circle"></i> <span data-i18n="agent.status.inactive">비활성</span>
                         </div>
                         <p class="agent-description" data-i18n="agent.desc.monitor">카메라 화면 감시, 경고 발송</p>
                     </div>
@@ -282,11 +282,9 @@
                 <div class="section-header-with-actions">
                     <h2><i class="fas fa-calendar-alt"></i> <span data-i18n="attendance.title">월별 출석부</span></h2>
                     <div class="attendance-controls">
-                        <button id="prevMonth" class="icon-btn"><i class="fas fa-chevron-left"></i></button>
                         <select id="attendanceMonth" class="month-selector">
                             <!-- JavaScript로 동적 생성 -->
                         </select>
-                        <button id="nextMonth" class="icon-btn"><i class="fas fa-chevron-right"></i></button>
                         <button id="exportMonthlyAttendance" class="export-btn">
                             <i class="fas fa-file-excel"></i>
                             <span data-i18n="attendance.export">월별 출석부 다운로드</span>
@@ -352,7 +350,24 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="js/i18n.js"></script>
 
-    <script type="module" src="js/main.js"></script>
+    <!-- Data -->
+    <script src="js/data/student_info.js"></script>
+
+    <!-- Core -->
+    <script src="js/store.js"></script>
+    <script src="js/api.js"></script>
+
+    <!-- Modules (Global Namespace) -->
+    <script src="js/modules/logging.js"></script>
+    <script src="js/modules/ui.js"></script>
+    <script src="js/modules/agents.js"></script>
+    <script src="js/modules/students.js"></script>
+    <script src="js/modules/controls.js"></script>
+    <script src="js/modules/meetings.js"></script>
+    <script src="js/modules/attendance.js"></script>
+
+    <!-- Main Orchestrator -->
+    <script src="js/main.js"></script>
 </body>
 
 </html>
