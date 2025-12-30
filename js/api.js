@@ -146,10 +146,37 @@ window.apiService = {
 
     // Fetch Meeting Schedule
     async fetchMeetings() {
+        const DUMMY_MEETINGS = [
+            {
+                id: 1,
+                title: 'Python 기초 강의',
+                startTime: '09:00',
+                endTime: '12:00',
+                date: '2025-01-02',
+                status: 'scheduled'
+            },
+            {
+                id: 2,
+                title: 'AI 알고리즘 실습',
+                startTime: '13:00',
+                endTime: '17:00',
+                date: '2025-01-02',
+                status: 'scheduled'
+            },
+            {
+                id: 3,
+                title: 'Langchain 프로젝트',
+                startTime: '09:00',
+                endTime: '12:00',
+                date: '2025-01-03',
+                status: 'scheduled'
+            }
+        ];
+
         if (API_CONFIG.MOCK_MODE) {
             console.log('[API] Check Meeting Schedule (Mock)');
             return new Promise(resolve => {
-                setTimeout(() => resolve([]), 500);
+                setTimeout(() => resolve(DUMMY_MEETINGS), 500);
             });
         }
 
@@ -158,8 +185,9 @@ window.apiService = {
             if (!response.ok) throw new Error('Network response was not ok');
             return await response.json();
         } catch (error) {
-            console.warn('Failed to fetch meetings:', error);
-            return [];
+            console.warn('Failed to fetch meetings (Backend not reachable?), using dummy data:', error);
+            // Fallback to dummy data as requested by user for legacy parity
+            return DUMMY_MEETINGS;
         }
     },
 
