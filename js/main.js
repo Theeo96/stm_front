@@ -52,6 +52,11 @@ function setupGlobalEvents() {
         stopLiveMonitoring();
     });
 
+    // 모니터링 일시정지 이벤트 (Controls -> Main)
+    window.addEventListener('monitoringPaused', () => {
+        pauseLiveMonitoring();
+    });
+
     // 언어 변경 이벤트 (i18n -> Main)
     window.addEventListener('languageChanged', (e) => {
         const lang = e.detail.language;
@@ -110,14 +115,24 @@ function startLiveMonitoring() {
     monitoringInterval = setInterval(fetchAndUpdateData, 1000);
 }
 
+function pauseLiveMonitoring() {
+    if (monitoringInterval) {
+        clearInterval(monitoringInterval);
+        monitoringInterval = null;
+    }
+
+    // 감시 Agent 대기 (데이터 유지)
+    Agents.updateAgentStatus('monitor', 'standby');
+}
+
 function stopLiveMonitoring() {
     if (monitoringInterval) {
         clearInterval(monitoringInterval);
         monitoringInterval = null;
     }
 
-    // 감시 Agent 비활성화 UI
-    Agents.updateAgentStatus('monitor', 'standby');
+    // 감시 Agent 비활성화 (데이터 삭제)
+    Agents.updateAgentStatus('monitor', 'inactive');
 
     // Clear Data UI on Stop
     setStudents([]);

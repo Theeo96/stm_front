@@ -32,12 +32,27 @@ export function updateAgentStatus(agentName, status) {
     if (!card) return;
 
     const statusEl = card.querySelector('.agent-status');
-    const key = status === 'active' ? 'agent.status.active' : 'agent.status.standby';
-    const text = window.translate ? window.translate(key) : (status === 'active' ? '활성' : '대기중');
+
+    // Map status to i18n key
+    const keyMap = {
+        'active': 'agent.status.active',
+        'standby': 'agent.status.standby',
+        'inactive': 'agent.status.inactive'
+    };
+    const key = keyMap[status] || 'agent.status.inactive';
+
+    // Fallback text
+    const defaultText = {
+        'active': '활성',
+        'standby': '대기중',
+        'inactive': '비활성'
+    };
+    const text = window.translate ? window.translate(key) : (defaultText[status] || status);
 
     statusEl.innerHTML = `<i class="fas fa-circle"></i> <span data-i18n="${key}">${text}</span>`;
 
-    // Class update
+    // Class update - inactive might share 'standby' styling or have its own
+    // Removing old classes first? No, className assignment overwrites.
     statusEl.className = `agent-status ${status}`;
 }
 
