@@ -6,7 +6,7 @@ const students = [
         phone: '010-1234-5678',
         status: 'online',
         camera: true,
-        lastSeen: '방금 전',
+        lastSeenKey: 'justnow',
         warnings: 0
     },
     {
@@ -15,7 +15,7 @@ const students = [
         phone: '010-2345-6789',
         status: 'online',
         camera: true,
-        lastSeen: '방금 전',
+        lastSeenKey: 'justnow',
         warnings: 0
     },
     {
@@ -24,7 +24,7 @@ const students = [
         phone: '010-3456-7890',
         status: 'online',
         camera: true,
-        lastSeen: '방금 전',
+        lastSeenKey: 'justnow',
         warnings: 0
     },
     {
@@ -33,7 +33,7 @@ const students = [
         phone: '010-4567-8901',
         status: 'online',
         camera: true,
-        lastSeen: '방금 전',
+        lastSeenKey: 'justnow',
         warnings: 1
     },
     {
@@ -42,7 +42,7 @@ const students = [
         phone: '010-5678-9012',
         status: 'online',
         camera: true,
-        lastSeen: '방금 전',
+        lastSeenKey: 'justnow',
         warnings: 0
     },
     {
@@ -51,7 +51,7 @@ const students = [
         phone: '010-6789-0123',
         status: 'online',
         camera: true,
-        lastSeen: '방금 전',
+        lastSeenKey: 'justnow',
         warnings: 0
     },
     {
@@ -60,7 +60,7 @@ const students = [
         phone: '010-7890-1234',
         status: 'online',
         camera: true,
-        lastSeen: '방금 전',
+        lastSeenKey: 'justnow',
         warnings: 0
     },
     {
@@ -69,19 +69,14 @@ const students = [
         phone: '010-8901-2345',
         status: 'away',
         camera: false,
-        lastSeen: '5분 전',
+        lastSeenKey: '5min',
+        lastSeenValue: 5,
         warnings: 0
     }
 ];
 
 // 활동 로그 데이터
-const activityLogs = [
-    {
-        time: '14:32:15',
-        type: 'info',
-        message: '강한 매니저 시스템이 초기화되었습니다.'
-    }
-];
+const activityLogs = [];
 
 // ============================
 // 월별 출석 데이터 생성
@@ -118,7 +113,6 @@ function generateMonthlyAttendanceData(year, month) {
             if (dayOfWeek === 0 || dayOfWeek === 6) {
                 monthlyData[student.id].days[day] = {
                     status: 'weekend',
-                    label: '-',
                     hours: 0
                 };
                 continue;
@@ -129,43 +123,37 @@ function generateMonthlyAttendanceData(year, month) {
             
             // 랜덤 출석 데이터 생성 (시뮬레이션)
             const rand = Math.random();
-            let status, label, hours;
+            let status, hours;
             
             if (rand < 0.85) {
                 // 85% 출석
                 status = 'present';
-                label = '출석';
                 hours = 8; // 8시간
                 monthlyData[student.id].summary.present++;
             } else if (rand < 0.90) {
                 // 5% 지각
                 status = 'late';
-                label = '지각';
                 hours = 7; // 7시간
                 monthlyData[student.id].summary.late++;
             } else if (rand < 0.93) {
                 // 3% 조퇴
                 status = 'early';
-                label = '조퇴';
                 hours = 6; // 6시간
                 monthlyData[student.id].summary.early++;
             } else if (rand < 0.96) {
                 // 3% 외출
                 status = 'outing';
-                label = '외출';
                 hours = 4; // 4시간
                 monthlyData[student.id].summary.outing++;
             } else {
                 // 4% 결석
                 status = 'absent';
-                label = '결석';
                 hours = 0;
                 monthlyData[student.id].summary.absent++;
             }
             
             monthlyData[student.id].days[day] = {
                 status: status,
-                label: label,
                 hours: hours
             };
         }

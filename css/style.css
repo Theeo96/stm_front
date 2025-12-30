@@ -163,6 +163,96 @@ body.instructor-mode .control-btn {
     transform: translateY(-2px);
 }
 
+.language-selector-container {
+    position: relative;
+}
+
+.language-toggle-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.language-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.language-toggle-btn i {
+    font-size: 1.1rem;
+}
+
+.language-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem;
+    min-width: 160px;
+    display: none;
+    flex-direction: column;
+    gap: 0.3rem;
+    z-index: 1000;
+    animation: fadeInDown 0.3s ease;
+}
+
+.language-dropdown.show {
+    display: flex;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.language-option {
+    background: transparent;
+    border: none;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+.language-option:hover {
+    background: var(--bg-secondary);
+    transform: translateX(5px);
+}
+
+.language-option.active {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.flag-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
 .status-badge {
     background: rgba(255, 255, 255, 0.2);
     padding: 0.6rem 1.2rem;
