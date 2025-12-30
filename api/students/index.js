@@ -52,7 +52,7 @@ module.exports = async function (context, req) {
         // Log the successful update
         context.log(`Updated ${incomingData.length} students. Cache size: ${studentsCache.length}`);
 
-        // DELETE request: Clear the data
+        // Return success response for POST
         context.res = {
             status: 200,
             body: { message: "Data updated successfully", currentCount: studentsCache.length }

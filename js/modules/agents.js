@@ -32,16 +32,13 @@ export function updateAgentStatus(agentName, status) {
     if (!card) return;
 
     const statusEl = card.querySelector('.agent-status');
-    statusEl.className = 'agent-status'; // reset
-    statusEl.innerHTML = '<i class="fas fa-circle"></i> ' + (status === 'active' ? '활성' : '대기'); // 번역 필요 시 수정
+    const key = status === 'active' ? 'agent.status.active' : 'agent.status.standby';
+    const text = window.translate ? window.translate(key) : (status === 'active' ? '활성' : '대기중');
 
-    if (status === 'active') {
-        statusEl.classList.add('active');
-        statusEl.innerHTML = `<i class="fas fa-circle"></i> ${window.translate ? window.translate('status.active') : '활성'}`;
-    } else {
-        statusEl.classList.add('standby');
-        statusEl.innerHTML = `<i class="fas fa-circle"></i> ${window.translate ? window.translate('status.standby') : '대기'}`;
-    }
+    statusEl.innerHTML = `<i class="fas fa-circle"></i> <span data-i18n="${key}">${text}</span>`;
+
+    // Class update
+    statusEl.className = `agent-status ${status}`;
 }
 
 function updateAgentDescriptions() {

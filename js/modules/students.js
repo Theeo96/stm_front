@@ -58,10 +58,19 @@ export function render() {
         // 번호 처리 (JSON에 num이 있으면 사용, 없으면 id 사용)
         const studentNum = student.num || student.id;
 
+        // 참가 여부 (isIn)
+        let isInBadge = '';
+        if (student.isIn) {
+            isInBadge = `<span class="presence-badge in"><i class="fas fa-check"></i> 참여</span>`;
+        } else {
+            isInBadge = `<span class="presence-badge out"><i class="fas fa-times"></i> 미참여</span>`;
+        }
+
         tr.innerHTML = `
             <td>${studentNum}</td>
             <td>${student.name}</td>
             <td>${student.phone || '-'}</td>
+            <td>${isInBadge}</td>
             <td>${statusBadge}</td>
             <td>${cameraStatus}</td>
             <td>${lastSeenText}</td>
@@ -88,12 +97,22 @@ export function render() {
 // 개별 수강생 알림 액션
 // ============================
 
+function incrementWarning(student) {
+    student.warnings = (student.warnings || 0) + 1;
+    render();
+    updateStatistics();
+}
+
 // 주의 전송
 export function sendAlert(studentId) {
     const student = state.students.find(s => s.id === studentId);
     if (student) {
-        addActivityLog('관리자', `${student.name} ${window.translate('log.manual.warn')}`, 'warning');
+        // Increment Warning
+        incrementWarning(student);
+
+        addActivityLog('관리자', `${student.name} ${window.translate('log.manual.warn')} (경고 +1)`, 'warning');
         alert(`${student.name}님에게 주의를 전송했습니다.`);
+
     }
 }
 
@@ -101,7 +120,10 @@ export function sendAlert(studentId) {
 export function makePhoneCall(studentId) {
     const student = state.students.find(s => s.id === studentId);
     if (student) {
-        addActivityLog('관리자', `${student.name} ${window.translate('log.manual.call')}`, 'info');
+        // Increment Warning
+        incrementWarning(student);
+
+        addActivityLog('관리자', `${student.name} ${window.translate('log.manual.call')} (경고 +1)`, 'info');
         alert(`${student.name}님에게 전화를 겁니다: ${student.phone}`);
     }
 }
@@ -112,7 +134,10 @@ export function sendMessage(studentId) {
     if (student) {
         const msg = prompt(`${student.name}님에게 보낼 메시지:`);
         if (msg) {
-            addActivityLog('관리자', `${student.name}에게 메시지 전송: ${msg}`, 'info');
+            // Increment Warning
+            incrementWarning(student);
+
+            addActivityLog('관리자', `${student.name}에게 메시지 전송: ${msg} (경고 +1)`, 'info');
         }
     }
 }
