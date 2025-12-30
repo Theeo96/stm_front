@@ -51,6 +51,14 @@ function setupGlobalEvents() {
     window.addEventListener('monitoringStopped', () => {
         stopLiveMonitoring();
     });
+
+    // 언어 변경 이벤트 (i18n -> Main)
+    window.addEventListener('languageChanged', (e) => {
+        const lang = e.detail.language;
+        const langNames = { 'ko': '한국어', 'en': 'English', 'ja': '日本語', 'zh': '中文', 'ar': 'العربية' };
+        const langName = langNames[lang] || lang;
+        Logging.addActivityLog('시스템', window.translate('log.system.languageChanged', lang, { language: langName }), 'info');
+    });
 }
 
 // Data Fetch & Update Cycle
@@ -58,6 +66,8 @@ async function fetchAndUpdateData() {
     try {
         // Students
         const newStudentData = await apiService.fetchStudents();
+
+        // Reliability Fix: If null (error), skip update to preserve existing data
         if (newStudentData) {
             // Current State (from store)
             const currentStudents = store.students;
@@ -72,8 +82,6 @@ async function fetchAndUpdateData() {
             // Attendance Data Sync
             const monthlyData = Attendance.generateMonthlyAttendanceData(store.currentYear, store.currentMonth);
             setMonthlyAttendanceData(monthlyData);
-            // Optimization: Only re-render attendance if strictly needed (currently always does)
-            // Attendance.render(); 
         }
 
         // Meetings
@@ -94,6 +102,9 @@ function startLiveMonitoring() {
     // 즉시 실행
     fetchAndUpdateData();
 
+    // 감시 Agent 활성화 UI
+    Agents.updateAgentStatus('monitor', 'active');
+
     // 주기적 실행 (1초) - 실시간 반응형
     if (monitoringInterval) clearInterval(monitoringInterval);
     monitoringInterval = setInterval(fetchAndUpdateData, 1000);
@@ -104,6 +115,9 @@ function stopLiveMonitoring() {
         clearInterval(monitoringInterval);
         monitoringInterval = null;
     }
+
+    // 감시 Agent 비활성화 UI
+    Agents.updateAgentStatus('monitor', 'standby');
 
     // Clear Data UI on Stop
     setStudents([]);
