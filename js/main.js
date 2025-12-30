@@ -78,11 +78,9 @@ async function fetchAndUpdateData() {
 
             // User requested: 
             // 1. If empty [], CLEAR list (no data).
-            // 2. If populated [{...}], MERGE with existing (partial update), preserving existing students not in payload?
-            //    Wait, user said: "이 '엄태홍' 에 대한 정보들만 따로 갱신되는거는 좋긴 하거든?" (Updating only 'Um' is good)
-            //    "기존의 4명이 표시된 채로" (Existing 4 remain displayed)
-            //    So "Merge" is indeed what they want for populated arrays.
+            // 2. If populated [{...}], MERGE with existing (partial update).
 
+            // Explicitly check for empty array first
             if (Array.isArray(newStudentData) && newStudentData.length === 0) {
                 // Case 1: Empty Array -> Clear All
                 window.Store.setStudents([]);
@@ -94,6 +92,7 @@ async function fetchAndUpdateData() {
                 window.Store.setStudents(mergedStudents);
             }
 
+            // Force render regardless of update type
             if (window.Students) {
                 window.Students.render();
                 window.Students.updateStatistics();
