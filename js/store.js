@@ -1,7 +1,8 @@
 // 전역 상태 관리 저장소
+window.Store = {};
 
 // 상태 객체
-export const state = {
+window.Store.state = {
     students: [],
     scheduledMeetings: [],
     activityLogs: [],
@@ -55,46 +56,47 @@ export const state = {
 // 상태 변경 리스너
 const listeners = [];
 
-export function subscribe(listener) {
+window.Store.subscribe = function (listener) {
     listeners.push(listener);
-}
+};
 
-export function notifyListeners(event, data) {
+window.Store.notifyListeners = function (event, data) {
     listeners.forEach(listener => listener(event, data));
-}
+};
 
-// 상태 업데이트 메서드 (예시)
-export function setStudents(students) {
-    state.students = students;
-    notifyListeners('studentsUpdated', students);
-}
+// 상태 업데이트 메서드
+window.Store.setStudents = function (students) {
+    window.Store.state.students = students;
+    window.Store.notifyListeners('studentsUpdated', students);
+};
 
-export function setScheduledMeetings(meetings) {
-    state.scheduledMeetings = meetings;
-    notifyListeners('meetingsUpdated', meetings);
-}
+window.Store.setScheduledMeetings = function (meetings) {
+    window.Store.state.scheduledMeetings = meetings;
+    window.Store.notifyListeners('meetingsUpdated', meetings);
+};
 
-export function setMonitoringState(isMonitoring) {
-    state.isMonitoring = isMonitoring;
-    notifyListeners('monitoringStateChanged', isMonitoring);
-}
+window.Store.setMonitoringState = function (isMonitoring) {
+    window.Store.state.isMonitoring = isMonitoring;
+    window.Store.notifyListeners('monitoringStateChanged', isMonitoring);
+};
 
-export function addActivityLog(log) {
-    state.activityLogs.unshift(log); // 최신 로그가 앞으로
-    if (state.activityLogs.length > 50) {
-        state.activityLogs.pop();
+window.Store.addActivityLog = function (log) {
+    window.Store.state.activityLogs.unshift(log); // 최신 로그가 앞으로
+    if (window.Store.state.activityLogs.length > 50) {
+        window.Store.state.activityLogs.pop();
     }
-    notifyListeners('logAdded', log);
-}
+    window.Store.notifyListeners('logAdded', log);
+};
 
-export function setMonthlyAttendanceData(data) {
-    state.monthlyAttendanceData = data;
-    notifyListeners('attendanceDataUpdated', data);
-}
+window.Store.setMonthlyAttendanceData = function (data) {
+    window.Store.state.monthlyAttendanceData = data;
+    window.Store.notifyListeners('attendanceDataUpdated', data);
+};
 
-export function updateAgentSetting(agentType, key, value) {
-    if (state.agentSettings[agentType]) {
-        state.agentSettings[agentType][key] = value;
-        notifyListeners('agentSettingsUpdated', { agentType, key, value });
+window.Store.updateAgentSetting = function (agentType, key, value) {
+    if (window.Store.state.agentSettings[agentType]) {
+        window.Store.state.agentSettings[agentType][key] = value;
+        window.Store.notifyListeners('agentSettingsUpdated', { agentType, key, value });
     }
-}
+};
+

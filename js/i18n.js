@@ -96,6 +96,10 @@ const translations = {
         'attendance.status.weekend': '-',
         'attendance.year': '년',
         'attendance.month': '월',
+        'attendance.month': '월',
+
+        // 로그 카테고리 (짧은 이름)
+        'log.category.monitor': '감독',
 
         // 활동 로그 메시지
         'log.system.init': '강한 매니저 시스템이 초기화되었습니다.',
@@ -244,6 +248,10 @@ const translations = {
         'attendance.status.weekend': '-',
         'attendance.year': ' ',
         'attendance.month': ' ',
+        'attendance.month': ' ',
+
+        // Log Category (Short)
+        'log.category.monitor': 'Monitor',
 
         // Activity Log Messages
         'log.system.init': 'Strong Manager system has been initialized.',
