@@ -11,25 +11,24 @@ const translations = {
         'header.theme.dark': '다크 모드',
         'header.theme.instructor': '교관 모드',
         'header.language': '한국어',
-
+        
         // 시스템 상태
         'system.standby': '시스템 대기중',
         'system.monitoring': '감독 진행중',
-
+        
         // 제어 패널
         'control.title': '제어 패널',
-        'control.conferenceUrl': '감독할 회의 URL',
         'control.start': '감독 시작',
         'control.stop': '감독 종료',
         'control.pause': '일시 정지',
         'control.emergency': '긴급 공지',
-
+        
         // 통계
         'stats.total': '총 수강생',
         'stats.present': '출석',
         'stats.absent': '결석',
         'stats.warning': '경고',
-
+        
         // AI 에이전트
         'agent.title': 'AI 에이전트 상태',
         'agent.admin': '운영 Agent',
@@ -42,7 +41,7 @@ const translations = {
         'agent.desc.tutor': '수업 질의응답, 내용 요약',
         'agent.desc.monitor': '카메라 화면 감시, 경고 발송',
         'agent.desc.attendance': '출결 체크 및 정정 요청 관리',
-
+        
         // 수강생 목록
         'student.title': '수강생 실시간 현황',
         'student.export': '출결현황 다운로드',
@@ -64,19 +63,19 @@ const translations = {
         'student.action.call': '전화 걸기',
         'student.action.message': '메시지 보내기',
         'student.action.alert': '알림 보내기',
-
+        
         // 마지막 확인 시간
         'time.justnow': '방금 전',
         'time.minutesago': '분 전',
         'time.hoursago': '시간 전',
         'time.daysago': '일 전',
-
+        
         // 활동 로그
         'log.type.info': '정보',
         'log.type.success': '성공',
         'log.type.warning': '경고',
         'log.type.error': '오류',
-
+        
         // 월별 출석부
         'attendance.days': '일',
         'attendance.weekday.sun': '일',
@@ -94,7 +93,7 @@ const translations = {
         'attendance.status.weekend': '-',
         'attendance.year': '년',
         'attendance.month': '월',
-
+        
         // 활동 로그 메시지
         'log.system.init': '강한 매니저 시스템이 초기화되었습니다.',
         'log.system.themeChanged': '테마가 {theme}(으)로 변경되었습니다.',
@@ -119,17 +118,17 @@ const translations = {
         'log.monitor.cameraOn': '{name} 수강생의 카메라가 켜졌습니다.',
         'log.monitor.away': '{name} 수강생이 자리를 비웠습니다. (경고 발송)',
         'log.monitor.returned': '{name} 수강생이 복귀했습니다.',
-
+        
         // 활동 로그
         'log.title': '활동 로그',
-
+        
         // Teams 미팅
         'meeting.title': '예약된 수업 일정',
         'meeting.refresh': '새로고침',
         'meeting.info': 'Teams에서 Power Automate로 예약된 수업 일정이 Microsoft Teams SDK를 통해 자동으로 불러와집니다.',
         'meeting.none': '예약된 수업이 없습니다.',
         'meeting.none.detail': 'Teams에서 Power Automate로 수업을 예약하면 자동으로 표시됩니다.',
-
+        
         // 월별 출석부
         'attendance.title': '월별 출석부',
         'attendance.export': '월별 출석부 다운로드',
@@ -144,12 +143,12 @@ const translations = {
         'attendance.late': '지각',
         'attendance.rate': '출석률',
         'attendance.timeRate': '시간률',
-
+        
         // 푸터
         'footer.copyright': '강한 매니저. AI 기반 교육 관리 시스템',
         'footer.version': 'Version 1.1.0'
     },
-
+    
     en: {
         // Header
         'header.title': 'Strong Manager',
@@ -158,25 +157,24 @@ const translations = {
         'header.theme.dark': 'Dark Mode',
         'header.theme.instructor': 'Instructor Mode',
         'header.language': 'English',
-
+        
         // System Status
         'system.standby': 'System Standby',
         'system.monitoring': 'Monitoring Active',
-
+        
         // Control Panel
         'control.title': 'Control Panel',
-        'control.conferenceUrl': 'Conference URL to Monitor',
         'control.start': 'Start Monitoring',
         'control.stop': 'Stop Monitoring',
         'control.pause': 'Pause',
         'control.emergency': 'Emergency Alert',
-
+        
         // Statistics
         'stats.total': 'Total Students',
         'stats.present': 'Present',
         'stats.absent': 'Absent',
         'stats.warning': 'Warnings',
-
+        
         // AI Agents
         'agent.title': 'AI Agent Status',
         'agent.admin': 'Admin Agent',
@@ -189,7 +187,7 @@ const translations = {
         'agent.desc.tutor': 'Class Q&A, Content Summary',
         'agent.desc.monitor': 'Camera Monitoring, Alert Sending',
         'agent.desc.attendance': 'Attendance Check & Correction',
-
+        
         // Student List
         'student.title': 'Real-time Student Status',
         'student.export': 'Download Attendance',
@@ -211,19 +209,19 @@ const translations = {
         'student.action.call': 'Call',
         'student.action.message': 'Message',
         'student.action.alert': 'Alert',
-
+        
         // Last Seen Time
         'time.justnow': 'Just now',
         'time.minutesago': ' min ago',
         'time.hoursago': ' hours ago',
         'time.daysago': ' days ago',
-
+        
         // Activity Log
         'log.type.info': 'Info',
         'log.type.success': 'Success',
         'log.type.warning': 'Warning',
         'log.type.error': 'Error',
-
+        
         // Monthly Attendance
         'attendance.days': ' days',
         'attendance.weekday.sun': 'Sun',
@@ -241,7 +239,7 @@ const translations = {
         'attendance.status.weekend': '-',
         'attendance.year': ' ',
         'attendance.month': ' ',
-
+        
         // Activity Log Messages
         'log.system.init': 'Strong Manager system has been initialized.',
         'log.system.themeChanged': 'Theme changed to {theme}.',
@@ -266,17 +264,17 @@ const translations = {
         'log.monitor.cameraOn': '{name}\'s camera turned on.',
         'log.monitor.away': '{name} is away. (Warning sent)',
         'log.monitor.returned': '{name} has returned.',
-
+        
         // Activity Log
         'log.title': 'Activity Log',
-
+        
         // Teams Meeting
         'meeting.title': 'Scheduled Classes',
         'meeting.refresh': 'Refresh',
         'meeting.info': 'Class schedules from Teams Power Automate are automatically synced via Microsoft Teams SDK.',
         'meeting.none': 'No scheduled classes.',
         'meeting.none.detail': 'Schedule classes in Teams with Power Automate to display them here.',
-
+        
         // Monthly Attendance
         'attendance.title': 'Monthly Attendance',
         'attendance.export': 'Download Monthly Attendance',
@@ -291,12 +289,12 @@ const translations = {
         'attendance.late': 'Late',
         'attendance.rate': 'Rate',
         'attendance.timeRate': 'Time Rate',
-
+        
         // Footer
         'footer.copyright': 'Strong Manager. AI-based Education Management System',
         'footer.version': 'Version 1.1.0'
     },
-
+    
     ja: {
         // ヘッダー
         'header.title': 'ストロングマネージャー',
@@ -305,25 +303,24 @@ const translations = {
         'header.theme.dark': 'ダークモード',
         'header.theme.instructor': 'インストラクターモード',
         'header.language': '日本語',
-
+        
         // システム状態
         'system.standby': 'システム待機中',
         'system.monitoring': '監視実行中',
-
+        
         // コントロールパネル
         'control.title': 'コントロールパネル',
-        'control.conferenceUrl': '監視する会議URL',
         'control.start': '監視開始',
         'control.stop': '監視終了',
         'control.pause': '一時停止',
         'control.emergency': '緊急通知',
-
+        
         // 統計
         'stats.total': '総受講生',
         'stats.present': '出席',
         'stats.absent': '欠席',
         'stats.warning': '警告',
-
+        
         // AIエージェント
         'agent.title': 'AIエージェント状態',
         'agent.admin': '運営エージェント',
@@ -336,7 +333,7 @@ const translations = {
         'agent.desc.tutor': '授業Q&A、内容要約',
         'agent.desc.monitor': 'カメラ監視、警告送信',
         'agent.desc.attendance': '出席確認および修正リクエスト管理',
-
+        
         // 受講生リスト
         'student.title': '受講生リアルタイム状況',
         'student.export': '出席状況ダウンロード',
@@ -358,19 +355,19 @@ const translations = {
         'student.action.call': '電話をかける',
         'student.action.message': 'メッセージを送る',
         'student.action.alert': '通知を送る',
-
+        
         // 最終確認時間
         'time.justnow': 'たった今',
         'time.minutesago': '分前',
         'time.hoursago': '時間前',
         'time.daysago': '日前',
-
+        
         // アクティビティログ
         'log.type.info': '情報',
         'log.type.success': '成功',
         'log.type.warning': '警告',
         'log.type.error': 'エラー',
-
+        
         // 月別出席簿
         'attendance.days': '日',
         'attendance.weekday.sun': '日',
@@ -388,7 +385,7 @@ const translations = {
         'attendance.status.weekend': '-',
         'attendance.year': '年',
         'attendance.month': '月',
-
+        
         // アクティビティログメッセージ
         'log.system.init': 'ストロングマネージャーシステムが初期化されました。',
         'log.system.themeChanged': 'テーマが{theme}に変更されました。',
@@ -413,17 +410,17 @@ const translations = {
         'log.monitor.cameraOn': '{name}受講生のカメラがオンになりました。',
         'log.monitor.away': '{name}受講生が離席しました。(警告送信)',
         'log.monitor.returned': '{name}受講生が戻りました。',
-
+        
         // アクティビティログ
         'log.title': 'アクティビティログ',
-
+        
         // Teamsミーティング
         'meeting.title': '予約された授業スケジュール',
         'meeting.refresh': '更新',
         'meeting.info': 'Teams Power Automateで予約された授業スケジュールがMicrosoft Teams SDKを通じて自動的に読み込まれます。',
         'meeting.none': '予約された授業はありません。',
         'meeting.none.detail': 'TeamsでPower Automateを使用して授業を予約すると自動的に表示されます。',
-
+        
         // 月別出席簿
         'attendance.title': '月別出席簿',
         'attendance.export': '月別出席簿ダウンロード',
@@ -438,12 +435,12 @@ const translations = {
         'attendance.late': '遅刻',
         'attendance.rate': '出席率',
         'attendance.timeRate': '時間率',
-
+        
         // フッター
         'footer.copyright': 'ストロングマネージャー。AI基盤教育管理システム',
         'footer.version': 'バージョン 1.1.0'
     },
-
+    
     zh: {
         // 页眉
         'header.title': '强大管理器',
@@ -452,25 +449,24 @@ const translations = {
         'header.theme.dark': '深色模式',
         'header.theme.instructor': '教官模式',
         'header.language': '中文',
-
+        
         // 系统状态
         'system.standby': '系统待机中',
         'system.monitoring': '监督进行中',
-
+        
         // 控制面板
         'control.title': '控制面板',
-        'control.conferenceUrl': '要监控的会议URL',
         'control.start': '开始监督',
         'control.stop': '停止监督',
         'control.pause': '暂停',
         'control.emergency': '紧急通知',
-
+        
         // 统计
         'stats.total': '总学生数',
         'stats.present': '出席',
         'stats.absent': '缺席',
         'stats.warning': '警告',
-
+        
         // AI代理
         'agent.title': 'AI代理状态',
         'agent.admin': '运营代理',
@@ -483,7 +479,7 @@ const translations = {
         'agent.desc.tutor': '课堂问答、内容总结',
         'agent.desc.monitor': '摄像头监控、警告发送',
         'agent.desc.attendance': '考勤检查及更正请求管理',
-
+        
         // 学生列表
         'student.title': '学生实时状态',
         'student.export': '下载考勤状态',
@@ -505,19 +501,19 @@ const translations = {
         'student.action.call': '拨打电话',
         'student.action.message': '发送消息',
         'student.action.alert': '发送通知',
-
+        
         // 最后确认时间
         'time.justnow': '刚刚',
         'time.minutesago': '分钟前',
         'time.hoursago': '小时前',
         'time.daysago': '天前',
-
+        
         // 活动日志
         'log.type.info': '信息',
         'log.type.success': '成功',
         'log.type.warning': '警告',
         'log.type.error': '错误',
-
+        
         // 月度考勤表
         'attendance.days': '天',
         'attendance.weekday.sun': '日',
@@ -535,7 +531,7 @@ const translations = {
         'attendance.status.weekend': '-',
         'attendance.year': '年',
         'attendance.month': '月',
-
+        
         // 活动日志消息
         'log.system.init': '强大管理器系统已初始化。',
         'log.system.themeChanged': '主题已更改为{theme}。',
@@ -560,17 +556,17 @@ const translations = {
         'log.monitor.cameraOn': '{name}的摄像头已打开。',
         'log.monitor.away': '{name}已离开座位。(已发送警告)',
         'log.monitor.returned': '{name}已返回。',
-
+        
         // 活动日志
         'log.title': '活动日志',
-
+        
         // Teams会议
         'meeting.title': '预约的课程日程',
         'meeting.refresh': '刷新',
         'meeting.info': '通过Microsoft Teams SDK自动加载Teams Power Automate预约的课程日程。',
         'meeting.none': '没有预约的课程。',
         'meeting.none.detail': '在Teams中使用Power Automate预约课程后将自动显示。',
-
+        
         // 月度考勤表
         'attendance.title': '月度考勤表',
         'attendance.export': '下载月度考勤表',
@@ -585,12 +581,12 @@ const translations = {
         'attendance.late': '迟到',
         'attendance.rate': '出勤率',
         'attendance.timeRate': '时间率',
-
+        
         // 页脚
         'footer.copyright': '强大管理器。基于AI的教育管理系统',
         'footer.version': '版本 1.1.0'
     },
-
+    
     ar: {
         // الرأس
         'header.title': 'مدير قوي',
@@ -599,25 +595,24 @@ const translations = {
         'header.theme.dark': 'الوضع الداكن',
         'header.theme.instructor': 'وضع المدرب',
         'header.language': 'العربية',
-
+        
         // حالة النظام
         'system.standby': 'النظام في وضع الاستعداد',
         'system.monitoring': 'المراقبة نشطة',
-
+        
         // لوحة التحكم
         'control.title': 'لوحة التحكم',
-        'control.conferenceUrl': 'URL الاجتماع للمراقبة',
         'control.start': 'بدء المراقبة',
         'control.stop': 'إيقاف المراقبة',
         'control.pause': 'إيقاف مؤقت',
         'control.emergency': 'تنبيه طارئ',
-
+        
         // الإحصائيات
         'stats.total': 'إجمالي الطلاب',
         'stats.present': 'حاضر',
         'stats.absent': 'غائب',
         'stats.warning': 'تحذيرات',
-
+        
         // وكلاء الذكاء الاصطناعي
         'agent.title': 'حالة وكيل الذكاء الاصطناعي',
         'agent.admin': 'وكيل الإدارة',
@@ -630,7 +625,7 @@ const translations = {
         'agent.desc.tutor': 'أسئلة وأجوبة الفصل، ملخص المحتوى',
         'agent.desc.monitor': 'مراقبة الكاميرا، إرسال التنبيهات',
         'agent.desc.attendance': 'فحص الحضور وإدارة طلبات التصحيح',
-
+        
         // قائمة الطلاب
         'student.title': 'حالة الطالب في الوقت الفعلي',
         'student.export': 'تنزيل الحضور',
@@ -652,19 +647,19 @@ const translations = {
         'student.action.call': 'اتصال',
         'student.action.message': 'رسالة',
         'student.action.alert': 'تنبيه',
-
+        
         // وقت آخر ظهور
         'time.justnow': 'الآن',
         'time.minutesago': ' دقيقة مضت',
         'time.hoursago': ' ساعة مضت',
         'time.daysago': ' يوم مضى',
-
+        
         // سجل النشاط
         'log.type.info': 'معلومات',
         'log.type.success': 'نجاح',
         'log.type.warning': 'تحذير',
         'log.type.error': 'خطأ',
-
+        
         // الحضور الشهري
         'attendance.days': ' أيام',
         'attendance.weekday.sun': 'الأحد',
@@ -682,7 +677,7 @@ const translations = {
         'attendance.status.weekend': '-',
         'attendance.year': ' ',
         'attendance.month': ' ',
-
+        
         // رسائل سجل النشاط
         'log.system.init': 'تم تهيئة نظام المدير القوي.',
         'log.system.themeChanged': 'تم تغيير السمة إلى {theme}.',
@@ -707,17 +702,17 @@ const translations = {
         'log.monitor.cameraOn': 'تم تشغيل كاميرا {name}.',
         'log.monitor.away': '{name} غائب. (تم إرسال تحذير)',
         'log.monitor.returned': '{name} قد عاد.',
-
+        
         // سجل النشاط
         'log.title': 'سجل النشاط',
-
+        
         // اجتماع Teams
         'meeting.title': 'الفصول المجدولة',
         'meeting.refresh': 'تحديث',
         'meeting.info': 'يتم مزامنة جداول الفصول من Teams Power Automate تلقائيًا عبر Microsoft Teams SDK.',
         'meeting.none': 'لا توجد فصول مجدولة.',
         'meeting.none.detail': 'قم بجدولة الفصول في Teams باستخدام Power Automate لعرضها هنا.',
-
+        
         // الحضور الشهري
         'attendance.title': 'الحضور الشهري',
         'attendance.export': 'تنزيل الحضور الشهري',
@@ -732,7 +727,7 @@ const translations = {
         'attendance.late': 'متأخر',
         'attendance.rate': 'المعدل',
         'attendance.timeRate': 'معدل الوقت',
-
+        
         // التذييل
         'footer.copyright': 'مدير قوي. نظام إدارة التعليم القائم على الذكاء الاصطناعي',
         'footer.version': 'الإصدار 1.1.0'
@@ -754,36 +749,32 @@ const languageNames = {
 // 번역 함수
 function translate(key, lang = currentLanguage, params = {}) {
     let text = translations[lang]?.[key] || translations['ko'][key] || key;
-
+    
     // 변수 치환 (예: {name}, {phone} 등)
     Object.keys(params).forEach(paramKey => {
         text = text.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), params[paramKey]);
     });
-
+    
     return text;
 }
 
 // 페이지 전체 번역 적용
 function applyTranslations(lang) {
     currentLanguage = lang;
-
+    
     // data-i18n 속성을 가진 모든 요소 번역
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         element.textContent = translate(key, lang);
     });
-
+    
     // 언어 라벨 업데이트
-    const currentLangElem = document.getElementById('currentLanguage');
-    if (currentLangElem) {
-        currentLangElem.textContent = languageNames[lang];
-    }
-
+    document.getElementById('currentLanguage').textContent = languageNames[lang];
+    
     // LocalStorage에 저장
     localStorage.setItem('language', lang);
-
-    // 동적 콘텐츠 다시 렌더링 (모듈화로 인해 전역 함수가 아닐 수 있음 - 이벤트 디스패치로 변경 권장)
-    // Legacy 호환성을 위해 유지하되, 안전하게 체크
+    
+    // 동적 콘텐츠 다시 렌더링
     if (typeof renderStudentTable === 'function') renderStudentTable();
     if (typeof renderScheduledMeetings === 'function') renderScheduledMeetings();
     if (typeof renderMonthlyAttendance === 'function') renderMonthlyAttendance();
@@ -791,11 +782,4 @@ function applyTranslations(lang) {
     if (typeof populateMonthSelector === 'function') populateMonthSelector();
     if (typeof renderActivityLog === 'function') renderActivityLog();
     if (typeof updateAgentDescriptions === 'function') updateAgentDescriptions();
-
-    // 모듈화된 환경을 위한 이벤트 발생
-    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
 }
-
-// 전역 객체에 노출 (모듈에서 접근 가능하도록)
-window.translate = translate;
-window.applyTranslations = applyTranslations;
