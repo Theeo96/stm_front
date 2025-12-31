@@ -84,9 +84,9 @@
                 </span>`;
 
             row.innerHTML = `
-                <td>${index + 1}</td>
+                <td>${student.num}</td>
                 <td><div class="student-name">${student.name}</div></td>
-                <td>${student.phone || '-'}</td>
+                <td>${student.phone}</td>
                 <td>${isInHtml}</td>
                 <td>
                     <span class="${statusBadgeClass}">
