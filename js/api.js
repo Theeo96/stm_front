@@ -44,34 +44,6 @@ window.apiService = {
         });
     },
 
-    async clearStudents() {
-        if (API_CONFIG.MOCK_MODE) return true;
-        try {
-            await fetch(`${API_CONFIG.BASE_URL}/students`, { method: 'DELETE' });
-            return true;
-        } catch (e) {
-            console.error('Failed to clear students cache:', e);
-            return false;
-        }
-    },
-
-    // Refresh time-sensitive fields (status, lastSeenText) without external fetch
-    refreshStudentStatuses(students) {
-        if (!students || !Array.isArray(students)) return [];
-        return students.map(student => {
-            // Re-calculate derived fields based on current time
-            // Note: student.last_seen should be an ISO string
-            const derivedStatus = this._deriveStatus(student);
-            const timeText = this._formatLastSeen(student.last_seen, student.face_detected);
-
-            return {
-                ...student,
-                status: derivedStatus,
-                lastSeenText: timeText
-            };
-        });
-    },
-
     // ----------------------------
     // API Helper Methods
     // ----------------------------

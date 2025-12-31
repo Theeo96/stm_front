@@ -140,64 +140,24 @@ window.addEventListener('monitoringPaused', () => {
 });
 
 // Monitoring Control
+let monitoringInterval = null;
 
 function startLiveMonitoring() {
-    // Helper for logging
-    const addLog = (message, type = 'info') => {
-        if (window.Logging && window.Logging.addActivityLog) {
-            window.Logging.addActivityLog(window.translate('log.type.info') || '정보', message, type);
-        } else {
-            console.log(message);
-        }
-    };
-
-    // Helper for UI updates
-    const updateMonitoringUI = (isActive) => {
-        if (window.Agents) {
-            window.Agents.updateAgentStatus('monitor', isActive ? 'active' : 'inactive');
-        }
-        // Additional UI updates can go here
-    };
-
-    if (window.Store.state.isMonitoring) return;
-
-    // Clear frontend data first
-    window.Store.setStudents([]);
-
-    window.Store.state.isMonitoring = true;
-    updateMonitoringUI(true);
-
-    // Fetch immediately on start
+    // 즉시 실행
     fetchAndUpdateData();
 
-    // 1. Data Fetch Loop (10 seconds) - Reduced traffic
-    monitoringInterval = setInterval(() => {
-        fetchAndUpdateData();
-    }, 10000);
+    // 감시 Agent 활성화 UI
+    if (window.Agents) window.Agents.updateAgentStatus('monitor', 'active');
 
-    // 2. UI Refresh Loop (1 second) - Real-time timers
-    uiRefreshInterval = setInterval(() => {
-        if (window.Store.state.isMonitoring) {
-            const currentStudents = window.Store.state.students || [];
-            if (currentStudents.length > 0) {
-                const refreshed = window.apiService.refreshStudentStatuses(currentStudents);
-                window.Store.setStudents(refreshed);
-                // Note: setStudents triggers listener? 
-                // Store.js has subscribe(listener). 
-                // If setStudents calls listeners, and Students.render is a listener, then this is enough.
-                // Let's assume we need to force render if not automatically wired. 
-                // Code below suggests manual render call in fetchAndUpdateData.
-            }
-            // Always force render to update timestamps
-            if (window.Students) {
-                window.Students.render();
-                // updateStatistics not strictly needed every second but okay
-            }
-        }
-    }, 1000);
+    // 주기적 실행 (1초) - 실시간 반응형
+    if (monitoringInterval) clearInterval(monitoringInterval);
+    monitoringInterval = setInterval(fetchAndUpdateData, 1000);
 
-    addLog(window.translate('log.monitor.start') || '실시간 감독이 시작되었습니다.');
-    addLog(window.translate('log.cam.connect') || '카메라 연결 성공: Main Camera', 'success');
+    // Log added by legacy restoration task previously
+    if (window.Logging && window.Logging.addActivityLog) {
+        window.Logging.addActivityLog(window.translate('log.type.info') || '정보', window.translate('log.monitor.start') || '실시간 감독이 시작되었습니다.', 'info');
+        window.Logging.addActivityLog(window.translate('log.type.info') || '정보', window.translate('log.cam.connect') || '카메라 연결 성공: Main Camera', 'success');
+    }
 }
 
 function pauseLiveMonitoring() {
@@ -205,62 +165,30 @@ function pauseLiveMonitoring() {
         clearInterval(monitoringInterval);
         monitoringInterval = null;
     }
-    if (uiRefreshInterval) {
-        clearInterval(uiRefreshInterval);
-        uiRefreshInterval = null;
-    }
 
     // 감시 Agent 대기 (데이터 유지)
     if (window.Agents) window.Agents.updateAgentStatus('monitor', 'standby');
 }
 
 async function stopLiveMonitoring() {
-    // Helper for logging
-    const addLog = (message, type = 'info') => {
-        if (window.Logging && window.Logging.addActivityLog) {
-            window.Logging.addActivityLog(window.translate('log.type.info') || '정보', message, type);
-        } else {
-            console.log(message);
-        }
-    };
-
-    // Helper for UI updates
-    const updateMonitoringUI = (isActive) => {
-        if (window.Agents) {
-            window.Agents.updateAgentStatus('monitor', isActive ? 'active' : 'inactive');
-        }
-        // Additional UI updates can go here
-    };
-
-    if (!window.Store.state.isMonitoring) return;
-
-    window.Store.state.isMonitoring = false;
-    updateMonitoringUI(false);
-
-    // Clear Intervals
     if (monitoringInterval) {
         clearInterval(monitoringInterval);
         monitoringInterval = null;
     }
-    if (uiRefreshInterval) {
-        clearInterval(uiRefreshInterval);
-        uiRefreshInterval = null;
-    }
 
-    // Clear Frontend Data
+    // 감시 Agent 비활성화 (데이터 삭제)
+    if (window.Agents) window.Agents.updateAgentStatus('monitor', 'inactive');
+
+    // Clear Data UI on Stop (Instant feedback)
     window.Store.setStudents([]);
     if (window.Students) {
         window.Students.render();
         window.Students.updateStatistics();
     }
 
-    // Clear Backend Cache (DELETE Request)
-    if (window.apiService && window.apiService.clearStudents) {
-        window.apiService.clearStudents().then(success => {
-            if (success) console.log('Server cache cleared.');
-        });
+    const t = window.translate || ((k) => k);
+    if (window.Logging && window.Logging.addActivityLog) {
+        window.Logging.addActivityLog(t('log.type.info') || '정보', t('log.monitor.stop') || '실시간 감독이 종료되었습니다.', 'info');
     }
-
-    addLog(window.translate('log.monitor.stop') || '실시간 감독이 종료되었습니다.');
 }
-
+```
