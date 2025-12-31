@@ -173,48 +173,79 @@ window.apiService = {
 
     // Fetch Meeting Schedule
     async fetchMeetings() {
-        const DUMMY_MEETINGS = [
-            {
-                id: 1,
-                title: 'Python 기초 강의',
-                startTime: '09:00',
-                endTime: '12:00',
-                date: '2025-01-02',
-                status: 'scheduled'
-            },
-            {
-                id: 2,
-                title: 'AI 알고리즘 실습',
-                startTime: '13:00',
-                endTime: '17:00',
-                date: '2025-01-02',
-                status: 'scheduled'
-            },
-            {
-                id: 3,
-                title: 'Langchain 프로젝트',
-                startTime: '09:00',
-                endTime: '12:00',
-                date: '2025-01-03',
-                status: 'scheduled'
-            }
-        ];
-
         if (API_CONFIG.MOCK_MODE) {
-            console.log('[API] Check Meeting Schedule (Mock)');
-            return new Promise(resolve => {
-                setTimeout(() => resolve(DUMMY_MEETINGS), 500);
-            });
+            const DUMMY_MEETINGS = [
+                {
+                    id: 1,
+                    title: 'Python 기초 강의',
+                    startTime: '09:00',
+                    endTime: '12:00',
+                    date: '2025-01-02',
+                    status: 'scheduled'
+                },
+                {
+                    id: 2,
+                    title: 'AI 알고리즘 실습',
+                    startTime: '13:00',
+                    endTime: '17:00',
+                    date: '2025-01-02',
+                    status: 'scheduled'
+                }
+            ];
+            return new Promise(resolve => setTimeout(() => resolve(DUMMY_MEETINGS), 500));
         }
 
         try {
-            const response = await fetch(`${API_CONFIG.BASE_URL}/meetings`);
+            // User requested POST, but confirmed GET in plan. Using GET.
+            const response = await fetch(`${API_CONFIG.BASE_URL}/meetings?_=${new Date().getTime()}`);
             if (!response.ok) throw new Error('Network response was not ok');
-            return await response.json();
+            const rawData = await response.json();
+
+            // Map data from Server format to UI format
+            // Server: { id, name, startDate (ISOish), endDate (ISOish), isReserved }
+            // UI: { id, title, startTime, endTime, date, status }
+
+            return rawData.map(item => {
+                // Parse Dates
+                // Input Ex: "2025-12-31 T14:00:00" or generic ISO
+                // We'll trust the Date constructor or string split if simple
+                // Handle potentially user-provided space " T"
+                const startStr = (item.startDate || '').replace(' T', 'T').replace(' ', 'T');
+                const endStr = (item.endDate || '').replace(' T', 'T').replace(' ', 'T');
+
+                const startObj = new Date(startStr);
+                const endObj = new Date(endStr);
+
+                // Helper to format HH:mm
+                const formatTime = (dateObj) => {
+                    if (isNaN(dateObj.getTime())) return '00:00';
+                    const h = String(dateObj.getHours()).padStart(2, '0');
+                    const m = String(dateObj.getMinutes()).padStart(2, '0');
+                    return `${h}:${m}`;
+                };
+
+                // Helper to format YYYY-MM-DD
+                const formatDate = (dateObj) => {
+                    if (isNaN(dateObj.getTime())) return 'YYYY-MM-DD';
+                    const y = dateObj.getFullYear();
+                    const mon = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const d = String(dateObj.getDate()).padStart(2, '0');
+                    return `${y}-${mon}-${d}`;
+                };
+
+                return {
+                    id: item.id,
+                    title: item.name,
+                    startTime: formatTime(startObj),
+                    endTime: formatTime(endObj),
+                    date: formatDate(startObj),
+                    status: item.isReserved ? 'scheduled' : 'cancelled' // default to scheduled if reserved
+                };
+            });
+
         } catch (error) {
-            console.warn('Failed to fetch meetings (Backend not reachable?), using dummy data:', error);
-            // Fallback to dummy data as requested by user for legacy parity
-            return DUMMY_MEETINGS;
+            console.warn('Failed to fetch meetings, fallback to empty:', error);
+            return []; // Return empty on error to avoid breaking UI
         }
     },
 
