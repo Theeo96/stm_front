@@ -45,7 +45,20 @@ window.apiService = {
     },
 
     async clearStudents() {
-        return true;
+        if (API_CONFIG.MOCK_MODE) {
+            console.log('[API] Clear Students (Mock)');
+            return true;
+        }
+
+        try {
+            const response = await fetch(`${API_CONFIG.BASE_URL}/students`, {
+                method: 'DELETE'
+            });
+            return response.ok;
+        } catch (error) {
+            console.error('Failed to clear students:', error);
+            return false;
+        }
     },
 
     // ----------------------------
