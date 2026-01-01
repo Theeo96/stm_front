@@ -32,7 +32,7 @@ window.apiService = {
                     if (window.Logging && window.Logging.addActivityLog) {
                         window.Logging.addActivityLog(
                             '경고',
-                            `[감독] ${existing.name} 수강생이 10분동안 얼굴이 감지되지 않음! 외출 처리 요먕`,
+                            `[감독] ${existing.name} 수강생이 10분동안 얼굴이 감지되지 않음! 외출 처리 요망`,
                             'warning'
                         );
                     }
