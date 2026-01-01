@@ -27,6 +27,17 @@ window.apiService = {
                 // Derive status based on the (potentially old) last_seen
                 const derivedStatus = this._deriveStatus({ ...incoming, last_seen: newLastSeen });
 
+                // Detect Status Change: Online -> Away
+                if (existing.status === 'online' && derivedStatus === 'away') {
+                    if (window.Logging && window.Logging.addActivityLog) {
+                        window.Logging.addActivityLog(
+                            '경고',
+                            `[감독] ${existing.name} 수강생이 10분동안 얼굴이 감지되지 않음! 외출 처리 요먕`,
+                            'warning'
+                        );
+                    }
+                }
+
                 // Update existing
                 return {
                     ...existing,
@@ -100,13 +111,14 @@ window.apiService = {
 
         const lastSeenDate = new Date(student.last_seen);
         const now = new Date();
-        const diffSeconds = Math.floor((now - lastSeenDate) / 1000);
+        // TEMPORARY: Add 8 minutes (480 seconds) for testing
+        const diffSeconds = Math.floor((now - lastSeenDate) / 1000) + 480;
 
-        if (diffSeconds < 120) { // < 2 min
+        if (diffSeconds < 600) { // < 10 min
             return 'online'; // Present (출석)
-        } else if (diffSeconds < 240) { // 2m ~ 4m
+        } else if (diffSeconds < 3600) { // 10m ~ 60m
             return 'away'; // Away (자리비움)
-        } else { // >= 4m
+        } else { // >= 60m
             return 'offline'; // Absent (결석)
         }
     },
@@ -120,7 +132,8 @@ window.apiService = {
 
         const lastSeenDate = new Date(lastSeenIso);
         const now = new Date();
-        const diffSeconds = Math.floor((now - lastSeenDate) / 1000);
+        // TEMPORARY: Add 8 minutes (480 seconds) for testing
+        const diffSeconds = Math.floor((now - lastSeenDate) / 1000) + 480;
 
         // Guard against negative if parsed time is slightly ahead of local clock
         if (diffSeconds < 0) return '지금';
