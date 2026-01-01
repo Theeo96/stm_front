@@ -112,7 +112,7 @@ window.apiService = {
         const lastSeenDate = new Date(student.last_seen);
         const now = new Date();
         // TEMPORARY: Add 8 minutes (480 seconds) for testing
-        const diffSeconds = Math.floor((now - lastSeenDate) / 1000) + 480;
+        const diffSeconds = Math.floor((now - lastSeenDate) / 1000);
 
         if (diffSeconds < 600) { // < 10 min
             return 'online'; // Present (출석)
@@ -133,7 +133,7 @@ window.apiService = {
         const lastSeenDate = new Date(lastSeenIso);
         const now = new Date();
         // TEMPORARY: Add 8 minutes (480 seconds) for testing
-        const diffSeconds = Math.floor((now - lastSeenDate) / 1000) + 480;
+        const diffSeconds = Math.floor((now - lastSeenDate) / 1000);
 
         // Guard against negative if parsed time is slightly ahead of local clock
         if (diffSeconds < 0) return '지금';
